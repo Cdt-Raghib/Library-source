@@ -1,0 +1,41 @@
+IssueList:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDBoxLayout:
+            size_hint: 1, 0.15
+            spacing: '15dp'
+
+            MDTextField:
+                id: itext
+                size_hint_x: 0.8
+                adaptive_width: True
+                on_text: root.search(itext)
+
+                MDTextFieldHintText:
+                    text: 'Search'
+                MDTextFieldLeadingIcon:
+                    icon: 'magnify'
+            
+            MDButton:
+                size_hint_x: 0.2
+                adaptive_width: True
+                on_release: root.open_options(self)
+
+                MDButtonText:
+                    text: root.searchby
+                
+                MDButtonIcon:
+                    icon: 'arrow-bottom-left-bold-outline'
+
+        MDRecycleView:
+            data: root.issue_data
+            viewclass: 'IssueList'
+
+            RecycleBoxLayout:
+                orientation: 'vertical'
+                size_hint: 1, None
+                height: self.minimum_height
+                default_size_hint: 1, None
+                default_height: '10dp'
+        

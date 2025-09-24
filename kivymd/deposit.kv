@@ -1,0 +1,32 @@
+#:include 'kivymd/deposit-single.kv' 
+#:include 'kivymd/deposit-multiple.kv'
+
+<DepositScreen>:
+    md_bg_color: self.theme_cls.backgroundColor
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDTabsSecondary:
+            id: tab
+            on_tab_switch: root.switch_content(*args)
+            adaptive_width: True
+
+            MDTabsItemSecondary:
+                id: s1
+                MDTabsItemIcon:
+                    icon: 'book-plus'
+                MDTabsItemText:
+                    id: text1
+                    text: 'Single'
+
+            MDTabsItemSecondary:
+                MDTabsItemIcon:
+                    icon: 'book-plus-multiple'
+                MDTabsItemText:
+                    text: 'Multiple'
+
+        BoxLayout:
+            id: content_box
+            size_hint: 1,1
+            orientation: 'vertical'

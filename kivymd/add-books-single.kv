@@ -1,0 +1,98 @@
+<MDIconLabel@MDBoxLayout>
+    spacing: '10dp'
+    padding: '15dp', '15dp', '1dp', '1dp'
+    MDRelativeLayout:
+        size_hint_x: None
+        width: '20dp'
+        MDIcon:
+            icon: 'book-plus'
+            pos_hint: {'center_y':0.6, 'center_x':0.4}
+            
+
+    MDLabel:
+        size_hint: None,1
+        text: 'Add Books'
+        halign: 'left'
+        valign: 'top'
+        theme_font_size: 'Custom'
+        font_size: '24sp'
+        adaptive_width: True
+
+
+<ATextField@MDTextField>
+    mode: 'filled'
+    on_text_validate: root.parent.parent.parent.move_next(self)
+
+<AddBooks>:
+    md_bg_color: self.theme_cls.backgroundColor
+
+    MDScrollView:
+        do_scroll_x: False
+        size_hint: 1, 0.8
+        pos_hint: {'top':0.9}
+        scroll_wheel_distance: '30dp'
+        smooth_scroll_end: 10
+        bar_width: '5dp'
+        bar_inactive_color: 0, 0, 0, 1
+        
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: '20dp'
+            padding: '15dp'
+            adaptive_height: True
+            # pos_hint: {'top':0.65}
+            # size_hint: 1,0.5
+
+            MDLabel:
+                text: "Add Books"
+                theme_font_style: 'Custom'
+                font_style: 'Display'
+                role: 'small'
+                halign: 'left'
+                size_hint: 1, None
+                height: dp(10)
+                theme_text_color: 'Custom'
+                #color 
+
+            MDDivider:
+                theme_color: 'Custom'
+                color: 'black'
+                
+            ATextField:
+                id: book_name_add
+                MDTextFieldHintText:
+                    text: 'Book name'
+            
+            ATextField:
+                id: book_no_add
+                MDTextFieldHintText:
+                    text: 'Book no.'
+            
+            ATextField:
+                id: book_writer_add
+                MDTextFieldHintText:
+                    text: 'Writer'
+            
+            ATextField:
+                id: book_catagory_add
+                MDTextFieldHintText:
+                    text: 'Catagory'
+            
+            ATextField:    
+                id: book_donate_add
+                MDTextFieldHintText:
+                    text: 'Donated by'
+                
+                MDTextFieldHelperText:
+                    text: 'Enter only cadet no.'
+                    mode: 'on_focus'
+
+            MDButton:
+                style: 'filled'
+                pos_hint: {'center_x': 0.5}
+                MDButtonIcon:
+                    icon: 'plus'
+                MDButtonText:
+                    text: 'Add'
+
+

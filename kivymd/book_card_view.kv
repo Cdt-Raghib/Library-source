@@ -1,0 +1,19 @@
+<BookCardView>
+    id: book_card_view
+    orientation: 'vertical'
+    size_hint: None, None
+    size: '150dp', '250dp'
+    orientation: 'vertical'
+    spacing: '5dp'
+
+    MDIcon:
+        icon: root.icon
+        font_size: 128
+        theme_font_size: 'Custom'
+        pos_hint: {'center_x':0.5}
+        size_hint: 1, 0.5
+    
+    MDLabel:
+        text: root.text
+        markup: True
+        size_hint: 1, 0.5

@@ -1,0 +1,51 @@
+<DepositMultiple>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(20)
+        adaptive_height: True
+        pos_hint: {'top': 0.9}
+
+        MDLabel:
+            text: "Deposit Books"
+            theme_font_style: 'Custom'
+            font_style: 'Display'
+            role: 'small'
+            halign: 'left'
+            size_hint: 1, None
+            height: dp(10)
+            theme_text_color: 'Custom'
+            color: 0.8, 1, 1, 1
+        
+        MDDivider:
+            theme_divider_color: 'Custom'
+            color: self.theme_cls.primaryColor
+        
+        MDTextField:
+            id: deposit_multiple_book
+            on_text: root.search_in_issue(deposit_multiple_book.text)
+
+            MDTextFieldHintText:
+                text: 'Enter book no. (e.g. 100,101,102)'
+            
+            MDTextFieldHelperText:
+                text: root.help 
+                mode: 'on_error'
+        
+        MDLabel:
+            text: 'Info'
+            theme_font_size: 'Custom'
+            font_size: '24dp'
+            padding: '0dp', '20dp', '0dp', '15dp'
+        
+        MDLabel:
+            text: root.depo_info
+            adaptive_height: True
+            
+        MDButton:
+            style: 'filled'
+            pos_hint: {'center_x': 0.5}
+            on_press: root.deposit(deposit_multiple_book)
+            MDButtonText:
+                text: 'Deposit'
+            

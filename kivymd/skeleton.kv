@@ -1,0 +1,57 @@
+# version: 2.0.1
+# added background
+
+#:import Skeleton screens.skeleton.Skeleton
+
+# <MDLabel>:
+#     theme_text_color: 'Custom'
+
+MDNavigationLayout:
+    MDScreenManager:
+        MDScreen:
+            FitImage:
+                source: "assets/img/background.jpg"  # put your image in the same folder
+                size_hint: 1, 1
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            MDBoxLayout:
+                orientation: 'vertical'
+
+                MDTopAppBar:
+                    id: app_bar
+                    adaptive_height: True
+                    #pos_hint: {'top':1}
+                    elevation: 4
+                    disabled: not screen_manager.login_state
+                    theme_bg_color: 'Custom'
+                    md_bg_color: rgba(0, 0.5, 0.8, 0.5)
+                    MDTopAppBarTitle:
+                        text: 'Library'
+                    
+                    MDTopAppBarLeadingButtonContainer:
+                        MDActionTopAppBarButton:
+                            icon: 'menu'
+                            on_press: nav_drawer.set_state('toggle')
+                Skeleton:
+                    id: screen_manager
+
+    # Navigation Drawer Panel
+    MDNavigationDrawer:
+        id: nav_drawer
+        drawer_type: 'modal'
+        radius: 0, dp(16), dp(16), 0
+        #on_close: app_bar.opacity = 1.0
+
+        MDNavigationDrawerMenu:
+            id: nav_drawer_menu
+            MDNavigationDrawerHeader:
+                MDLabel:
+                    text: "Navigate"
+                    font_style: "Display"
+                    role: "small"
+                    theme_line_height: "Custom"
+                    line_height: 0
+                    adaptive_height: True
+                    theme_text_color: "Custom"
+                    text_color: self.theme_cls.primaryColor
+            MDNavigationDrawerDivider:
+        

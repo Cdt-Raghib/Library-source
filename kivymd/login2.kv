@@ -1,0 +1,56 @@
+<LoginScreen>:
+    md_bg_color: self.theme_cls.backgroundColor
+   
+    MDBoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.6,0.5
+        pos_hint: {'center_x':0.5,'center_y': 0.5}
+        spacing: '20dp'
+
+        MDBoxLayout:
+            MDRelativeLayout:
+                size_hint: 0.4,1
+                MDIcon:
+                    icon: 'book-account'
+                    pos_hint: {'center_x': 0.9, 'center_y':0.55}
+
+            MDLabel:
+                size_hint: 0.6,1
+                text: 'User Login'
+                halign: 'left'
+                valign: 'bottom'
+                theme_font_size: 'Custom'
+                font_size: '24sp'
+        
+        MDTextField:
+            id: username
+            MDTextFieldHintText:
+                text: 'Username'
+            
+            MDTextFieldLeadingIcon:
+                icon: 'account'
+        
+        MDTextField:
+            id: password
+            password: True
+
+            MDTextFieldHintText:
+                text: 'Password'
+            MDTextFieldLeadingIcon:
+                icon: 'key'
+        
+        MDLabel:
+            text: root.login_message
+            theme_text_color: 'Custom'
+            color: 'red'
+            halign: 'center'
+        
+        MDButton:
+            size_hint: None, None
+            size: '110dp', '50dp'
+            style: 'elevated'
+            pos_hint: {'center_x':0.5}
+            on_press: root.login(username, password)
+
+            MDButtonText:
+                text: 'Log in'

@@ -1,0 +1,90 @@
+<MDIconLabel1@MDBoxLayout>
+    MDRelativeLayout:
+        size_hint: 0.4,1
+        MDIcon:
+            icon: 'book-arrow-up'
+            pos_hint: {'center_x': 0.9, 'center_y':0.55}
+
+    MDLabel:
+        size_hint: 0.6,1
+        text: 'Issue Books'
+        halign: 'left'
+        theme_font_size: 'Custom'
+        font_size: '24sp'
+
+
+<ITextField@MDTextField>
+    mode: 'filled'
+    on_text_validate: root.parent.parent.parent.move_next(self)
+
+<IssueBooks>:
+    md_bg_color: self.theme_cls.surfaceVariantColor
+
+    MDScrollView:
+        do_scroll_x: False
+        size_hint: 1, 0.8
+        pos_hint: {'top':0.9}
+        scroll_wheel_distance: '30dp'
+        smooth_scroll_end: 10
+        bar_width: '5dp'
+        bar_inactive_color: 0, 0, 0, 1
+        
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: '20dp'
+            padding: '15dp'
+            adaptive_height: True
+            
+            MDLabel:
+                text: "Issue Book"
+                theme_font_style: 'Custom'
+                font_style: 'Display'
+                role: 'small'
+                halign: 'left'
+                size_hint: 1, None
+                height: dp(10)
+                        
+        
+            MDDivider:
+                theme_divider_color: 'Custom'
+                color: self.theme_cls.primaryColor
+
+            ITextField:
+                MDTextFieldHintText:
+                    text: 'Book No.'
+
+            ITextField:
+                MDTextFieldHintText:
+                    text: 'Book Name'
+            ITextField:
+                MDTextFieldHintText:
+                    text: 'Writer'
+            ITextField:
+                MDTextFieldHintText:
+                    text: 'Catagory'
+            
+            MDDivider:
+            
+            ITextField:
+                id: cadet_no
+                on_text: root.search(cadet_no)
+                MDTextFieldHintText:
+                    text: 'Cadet No.'
+                
+            MDLabel:
+                text: root.issue_cadet_name
+                adaptive_height: True
+                padding: '15dp'
+            
+            MDLabel:
+                text: root.issue_cadet_batch
+                adaptive_height: True
+                padding: '15dp'
+            
+            MDButton:
+                style: 'tonal'
+                pos_hint: {'center_x': 0.5}
+                MDButtonText:
+                    text: 'Issue'
+            
+

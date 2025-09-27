@@ -1,58 +1,17 @@
-from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.stacklayout import MDStackLayout
-from kivy.properties import StringProperty, ObjectProperty
-
+from kivy.properties import StringProperty
+from utils.book import Books
 """
     Merge with other screens
 """
-class Book:
-    """
-        Later use it globally
-    """
-    dictonary = {}
-    keys = ['book_no', 'icon', 'name', 'writer_name', 'donated_by', 'average_rating','comments']
-    def __init__(self, **book_info):
-        self.dictonary = book_info
-    
-    def __init__(self, book_info:list):
-        splitted_info = book_info.split('|')
 
-        for k,f in zip(self.keys,splitted_info):
-            self.dictonary[k] = f
-    
-    def _decode(self, text):
-        if '[bn]' in text:
-            pass
-            # end with [/bn]|Pyavro required
-        text = text.replace('[n]', '\n')
-        return text
-
-    def _encode(self, text):
-        text.replace('\n', '[n]')
-
-    def get(self, key):
-        request = self.dictonary.get(key, 'Unknown')
-        if request == '':
-            request = 'Unknown'
-        print(request, type(request))
-        return self._decode(request)
-    
-    def set(self, key, value):
-        if not(key in self.keys):
-            raise f"Unknown option: {key}. Permitted options are: {self.keys}"
-        
-        self.dictonary[key] = self._encode(value)
-
-"""
-Sequence:
-    [book no.|icon|name|writer's name|donated by|average rating|comments(use [n] instead of \n)|]
-"""
 Builder.load_file('kivymd/book_card_view.kv')
+Builder.load_file('kivymd/books.kv')
 
 class BookCardView(MDCard):
     icon = StringProperty('book-open-page-variant')
@@ -62,28 +21,29 @@ class BookCardView(MDCard):
 class BookList(MDScreen):
     keyword = 'book_no'
     book_inst = []
+    _database = None
     card_view = None
 
     def app_request(self, **kwargs):
-        pass
+        self._database = kwargs.get('db1', None)
+        if self._database is None:
+            raise ValueError("Database not found. Please provide a valid database instance.")
+
+        self.load_books()
+        self.init_book_cards()
     
     def load_books(self):
         """
         book loader:
-            Books will be loaded from JSON or database(SQL) files in further update.
+            Books will be loaded from database(SQL) files.
         """
-        # For test only usage
+
         self.book_layout = MDStackLayout(orientation= 'lr-tb', spacing='15dp')
         self.main_view = MDScrollView(do_scroll_x=False, scroll_distance='10dp', scroll_wheel_distance='20dp')
-        data_path = 'assests/data/books.txt'
-        with open(data_path, 'r', encoding='utf-8') as file:
-            self.all_books = file.read().split('\n')
-
-        for f in self.all_books:
-            self.book_inst.append(Book(f))
+        self.books = Books(self._database)        
 
     def open_options(self, caller):
-        self.items = [ #may create an issue
+        self.items = [ 
         {
         'text':'Book name',
         'on_release':lambda x='book_name', y='Book name':self.search_by(x,y),
@@ -139,14 +99,13 @@ class BookList(MDScreen):
         self.main_view.remove_widget()
         self.init_book_cards(search=True, find=text)
         
-class TestApp(MDApp):
-    def build(self):
-        return Builder.load_file('kivymd/books.kv')
+# class TestApp(MDApp):
+#     def build(self):
+#         return 
     
-    def on_start(self):
-        self.root.load_books()
-        self.root.init_book_cards()
+#     def on_start(self):
+        
 
-if __name__=='__main__':
-    TestApp().run()
+# if __name__=='__main__':
+#     TestApp().run()
 

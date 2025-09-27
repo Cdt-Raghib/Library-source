@@ -1,4 +1,16 @@
-IssueList:
+<MyList>
+    id: my_list
+    on_press: root.show_details()
+    MDListItemHeadlineText:
+        text: root.book_name
+    MDListItemSupportingText:
+        text: root.book_no
+    
+    MDListItemTertiaryText:
+        text: root.cadet_name
+    
+
+<IssueList>:
     MDBoxLayout:
         orientation: 'vertical'
 
@@ -23,15 +35,17 @@ IssueList:
                 on_release: root.open_options(self)
 
                 MDButtonText:
+                    id: search_plate
                     text: root.searchby
                 
                 MDButtonIcon:
                     icon: 'arrow-bottom-left-bold-outline'
 
-        MDRecycleView:
+        RecycleView:
             data: root.issue_data
-            viewclass: 'IssueList'
-
+            key_viewclass: 'viewclass'
+            key_size: 'height'
+            
             RecycleBoxLayout:
                 orientation: 'vertical'
                 size_hint: 1, None

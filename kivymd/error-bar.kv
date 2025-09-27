@@ -1,0 +1,22 @@
+<ErrorBar>
+    size_hint_x: 0.5
+    pos_hint: {"center_x": 0.5}
+    size_hint_y: None
+    on_open: root.play_sound()
+    y: dp(48)
+
+    MDSnackBarText:
+        text: 'Error'
+    
+    MDSnackBarSupportingText:
+        text: root.text
+    
+    MDSnackBarButtonConatiner:
+        MDSnackBarActionButton:
+            text: 'help'
+            on_release: root.open_help()
+        
+        MDSnackBarCloseButton:
+            icon: 'close'
+            on_release: root.dismiss()
+    

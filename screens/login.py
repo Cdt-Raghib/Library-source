@@ -33,22 +33,26 @@ class LoginScreen(MDScreen):
     login_error = BooleanProperty(False)
     accounts = []
     passwords = []
+    database = None
     
     def app_request(self, **kwargs):
-        pass
+        self.database = kwargs.get('db2')
     
-    def load_info(self, file_path):
-        with open(file_path) as file:
-            all = file.read().split('\n')
-            self.accounts = all[0].split(' ')
-            self.passwords = all[1].split(' ')
+    def load_info(self):
+        rows = self.database.fetchall('SELECT username, password FROM accounts')
+        if isinstance(rows, int):
+            return
+        for row in rows:
+            row = dict(row)
+            self.accounts.append(row['username'])
+            self.passwords.append(row['password'])  
 
     def login(self, username, password):
-        self.load_info('assests/data/user_info')
+        self.load_info()
         for f,k in zip(self.accounts,self.passwords):
             print(f,k)
             if username.text == Cipher().decode(f) and password.text == Cipher().decode(k):
-                self.manager.current = 'issue_books'#'home'
+                self.manager.current = 'home'#'home'
                 self.manager.login_state = True
                 return 
             
@@ -57,3 +61,8 @@ class LoginScreen(MDScreen):
 
 if __name__=='__main__':
     print(Cipher().decode('ehqmr2veklmf'))
+    print(Cipher().encode('pyrlibrary@2224'))
+    print(Cipher().encode('coadmin.library'))
+    print(Cipher().encode('coadmin@library'))
+    print(Cipher().encode('asst.library'))
+    print(Cipher().encode('i am a volunteer'))

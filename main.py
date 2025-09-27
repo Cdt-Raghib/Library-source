@@ -1,13 +1,17 @@
 from kivymd.app import MDApp
 from kivymd.uix.navigationdrawer import MDNavigationDrawerItem,MDNavigationDrawerItemLeadingIcon,MDNavigationDrawerItemText, MDNavigationDrawerDivider
 from kivy.lang import Builder
+from kivy.properties import BooleanProperty 
+
 from screens.login import LoginScreen
 from screens.add_books import AddBooks
 from screens.register import RegisterUser
 from screens.issue_books import IssueBooks
 from screens.deposit import DepositScreen
+from screens.issue_list import IssueList
+from screens.home import BookList
+
 from utils.databasemanager import DatabaseManager
-from kivy.properties import BooleanProperty 
 
 """
 version: 2.0.1.1
@@ -17,6 +21,11 @@ Goal:
     Create two database library.db and login.db
     Make a database manager class
 """
+
+librarydb = DatabaseManager('assets/databases/library.db')
+accountdb = DatabaseManager('assets/databases/accounts.db')
+librarydb.executescript('SQL/library.sql')
+accountdb.executescript('SQL/accounts.sql')
 
 class MainApp(MDApp):
     app_screens1 = {
@@ -67,7 +76,9 @@ class MainApp(MDApp):
             AddBooks(name='add_books'),
             RegisterUser(name='register_user'),
             IssueBooks(name='issue_books'),
-            DepositScreen(name='deposit_books')
+            DepositScreen(name='deposit_books'),
+            IssueList(name='issue_list'),
+            BookList(name='home')
         ]
         # self.app_screens_layout[4].ids.tab.switch_tab(text=self.app_screens_layout[4].ids.text1.text)
         self.add_nav_item(self.app_screens1)
@@ -76,7 +87,7 @@ class MainApp(MDApp):
 
         for f in self.app_screens_layout:
             f.md_bg_color = self.theme_cls.transparentColor
-            f.app_request(instance=self)
+            f.app_request(instance=self, db1=librarydb, db2=accountdb)
             self.root.ids.screen_manager.add_widget(f)
         
         self.root.ids.screen_manager.current = 'login'

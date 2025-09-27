@@ -18,8 +18,6 @@
     on_text_validate: root.parent.parent.parent.move_next(self)
 
 <IssueBooks>:
-    md_bg_color: self.theme_cls.surfaceVariantColor
-
     MDScrollView:
         do_scroll_x: False
         size_hint: 1, 0.8
@@ -45,21 +43,25 @@
                 height: dp(10)
                         
         
-            MDDivider:
+            MDDivider: #Fix this divider color
                 theme_divider_color: 'Custom'
                 color: self.theme_cls.primaryColor
 
             ITextField:
+                on_text: root.search_book(self)
                 MDTextFieldHintText:
                     text: 'Book No.'
 
             ITextField:
+                id: book_name
                 MDTextFieldHintText:
                     text: 'Book Name'
             ITextField:
+                id: author
                 MDTextFieldHintText:
-                    text: 'Writer'
+                    text: 'Author'
             ITextField:
+                id: category
                 MDTextFieldHintText:
                     text: 'Catagory'
             
@@ -84,6 +86,7 @@
             MDButton:
                 style: 'tonal'
                 pos_hint: {'center_x': 0.5}
+                on_press: root.issue_book()
                 MDButtonText:
                     text: 'Issue'
             

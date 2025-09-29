@@ -6,12 +6,52 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.stacklayout import MDStackLayout
 from kivy.properties import StringProperty
 from utils.book import Books
+from kivymd.uix.dialog import MDDialog
 """
     Merge with other screens
+    Add refresh
 """
 
 Builder.load_file('kivymd/book_card_view.kv')
 Builder.load_file('kivymd/books.kv')
+Builder.load_file('kivymd/book-detail-dialog.kv')
+
+class BookDetailDialog(MDDialog):
+    text = StringProperty()
+    book_dict = {}
+    manager = None
+
+    def load_text(self):
+        print('bdd: ', self.book_dict)
+        state = 'available' if self.book_dict['stock']>0 else 'unavailable'
+        color = 'dc143c' if state=='unavailable' else '20ff08'
+        comments = ''#ff9900
+        rating = 'unrated' if not self.book_dict['average_rating'] else self.book_dict['average_rating']
+
+        if self.book_dict['comments'] is not None:
+            for f in self.book_dict['comments']:
+                comments+=f['comment']+'\n'
+                comments+=f'[color=ff9900]->{f['cadet_no']}[/color]\n\n'
+
+        self.text = f"""
+        [b]About:[/b]\n
+        {self.book_dict['title']}\n
+        Book no. : {self.book_dict['book_no']}\n
+        Author   : {self.book_dict['author']}\n
+        Donted by: {self.book_dict['donated_by']}\n
+        Status   : [color={color}]{state}[/color]\n
+        Rating   : {rating}
+        \n
+        [b]Comments:[/b]\n
+        {comments}
+        """
+        print(self.text)
+
+    def move_to_issue(self):
+        self.dismiss()
+        self.manager.root.ids.screen_manager.current = 'issue_books'
+        self.manager.app_screens_layout[3].set_book_no(self.book_dict['book_no'])
+
 
 class BookCardView(MDCard):
     icon = StringProperty('book-open-page-variant')
@@ -26,6 +66,7 @@ class BookList(MDScreen):
 
     def app_request(self, **kwargs):
         self._database = kwargs.get('db1', None)
+        self.running_app = kwargs.get('main')
         if self._database is None:
             raise ValueError("Database not found. Please provide a valid database instance.")
 
@@ -45,16 +86,16 @@ class BookList(MDScreen):
     def open_options(self, caller):
         self.items = [ 
         {
-        'text':'Book name',
-        'on_release':lambda x='book_name', y='Book name':self.search_by(x,y),
+        'text':'Title',
+        'on_release':lambda x='title', y='Title':self.search_by(x,y),
         },
         {
         'text':'Book no.',
         'on_release':lambda x='book_no', y='Book no.':self.search_by(x,y),
         },
         {
-        'text':'Writer name',
-        'on_release':lambda x='writer_name', y='Writer name':self.search_by(x,y),
+        'text':'Author',
+        'on_release':lambda x='author', y='Author':self.search_by(x,y),
         }
         ]
         self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom',
@@ -62,15 +103,21 @@ class BookList(MDScreen):
         self.options.open()
     
     def init_book_cards(self, find='', search=False):
-        for f in self.book_inst:
-            print(f.dictonary, f.get('icon'))
-            if search:
-                if not(find in f.get(self.keyword)):
-                    continue
-            self.card_view = BookCardView(on_relese=lambda x=f:self.show_details(book_inst=x))
-            if f.get('icon') != 'Unknown':
+        rows = self.books.search(self.keyword, find) if search \
+        else self.books.get_all(show_error=False)
+        print(f'home: {rows}')
+        if len(self.ids.boxlayout.children)>1:
+            self.ids.boxlayout.remove_widget(self.ids.boxlayout.children[0])
+            self.main_view.remove_widget(self.main_view.clear_widgets())
+            self.book_layout.clear_widgets()
+
+        for f in rows:
+            print(f)
+            self.card_view = BookCardView(on_release=lambda y, x=f:self.show_details(book_dict=x))
+        
+            if f.get('icon', 'e') != 'e':
                 self.card_view.icon = f.get('icon')
-            self.card_view.text = f.get('name')
+            self.card_view.text = f.get('title')
             self.book_layout.add_widget(self.card_view)
         
         self.main_view.add_widget(self.book_layout)
@@ -87,25 +134,18 @@ class BookList(MDScreen):
     #     self.ids.item_text.text = item_text
     #     self.options.dismiss()
     
-    def show_details(self, inst, book_inst):
-        print('Yet to work on')
+    def show_details(self, book_dict):
+        dial = BookDetailDialog()
+        dial.manager = self.running_app
+        dial.book_dict = book_dict
+        dial.load_text()
+        dial.open()
 
     def search(self, text):
         if text.text=='':
-            self.main_view.remove_widget()
             self.init_book_cards()
             return
         
-        self.main_view.remove_widget()
         self.init_book_cards(search=True, find=text)
         
-# class TestApp(MDApp):
-#     def build(self):
-#         return 
-    
-#     def on_start(self):
-        
-
-# if __name__=='__main__':
-#     TestApp().run()
 

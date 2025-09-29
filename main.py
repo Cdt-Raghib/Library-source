@@ -10,16 +10,13 @@ from screens.issue_books import IssueBooks
 from screens.deposit import DepositScreen
 from screens.issue_list import IssueList
 from screens.home import BookList
-
+#from kivymd.uix.snackbar import MDSnackbar
 from utils.databasemanager import DatabaseManager
 
 """
 version: 2.0.1.1
 Goal:
-    Add navigation items from python file: Done
-    Keep request of children :)
-    Create two database library.db and login.db
-    Make a database manager class
+    Change the db path to appdata/local: pending
 """
 
 librarydb = DatabaseManager('assets/databases/library.db')
@@ -33,6 +30,7 @@ class MainApp(MDApp):
         'Issue Books':'book-arrow-up-outline',
         'Deposit Books': 'book-arrow-down-outline',
         'Add Books':'book-plus-outline',
+        'Issue List':'clipboard-list'
         }
 
     app_screens2 = {
@@ -87,7 +85,7 @@ class MainApp(MDApp):
 
         for f in self.app_screens_layout:
             f.md_bg_color = self.theme_cls.transparentColor
-            f.app_request(instance=self, db1=librarydb, db2=accountdb)
+            f.app_request(main=self, db1=librarydb, db2=accountdb)
             self.root.ids.screen_manager.add_widget(f)
         
         self.root.ids.screen_manager.current = 'login'
@@ -99,5 +97,13 @@ class MainApp(MDApp):
         s = name.lower()
         s = s.replace(' ', '_')
         return s
+    
+    def on_stop(self):
+        librarydb.commit()
+        accountdb.commit()
+        librarydb.backup('assets/data/backups/lib/')
+        accountdb.backup('assets/data/backups/acc/')
+        librarydb.close()
+        accountdb.close()
     
 MainApp().run()

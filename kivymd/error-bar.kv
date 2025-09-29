@@ -5,18 +5,22 @@
     on_open: root.play_sound()
     y: dp(48)
 
-    MDSnackBarText:
+    MDSnackbarText:
         text: 'Error'
     
-    MDSnackBarSupportingText:
+    MDSnackbarSupportingText:
         text: root.text
+        padding: [0, 0, 0, dp(56)]
+        theme_text_color: 'Custom'
+        text_color: 'crimson'
     
-    MDSnackBarButtonConatiner:
-        MDSnackBarActionButton:
-            text: 'help'
+    MDSnackbarButtonContainer:
+        MDSnackbarActionButton:
             on_release: root.open_help()
+            MDSnackbarActionButtonText:
+                text: 'help'
         
-        MDSnackBarCloseButton:
+        MDSnackbarCloseButton:
             icon: 'close'
             on_release: root.dismiss()
     

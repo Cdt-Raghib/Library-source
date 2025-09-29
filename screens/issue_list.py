@@ -8,6 +8,9 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.list import MDListItem
 from kivy.properties import StringProperty, ListProperty
 
+"""
+Fix it
+"""
 Builder.load_file('kivymd/issue-list.kv')
 class MyList(MDListItem):
     book_name = StringProperty('')
@@ -42,14 +45,14 @@ class MyList(MDListItem):
 class IssueList(MDScreen):
     issue_database = None
     issue_data = ListProperty([])
-    searchby = StringProperty('Cadet no')
+    searchby = StringProperty('cadet_no')
     
     def open_options(self, caller):
         self.items = [
-        {
-        'text':'Book name',
-        'on_release':lambda x='book_name', y='Book name':self.search_by(x,y),
-        },
+        # {
+        # 'text':'Title',
+        # 'on_release':lambda x='title', y='Title':self.search_by(x,y),
+        # },
         {
         'text':'Book no.',
         'on_release':lambda x='book_no', y='Book no.':self.search_by(x,y),
@@ -58,10 +61,10 @@ class IssueList(MDScreen):
         'text':'Cadet no.',
         'on_release':lambda x='cadet_no', y='Cadet no.':self.search_by(x,y),
         },
-        {
-        'text':'Cadet name',
-        'on_release':lambda x='cadet_name', y='Cadet name':self.search_by(x,y),
-        }
+        # {
+        # 'text':'Cadet name',
+        # 'on_release':lambda x='cadet_name', y='Cadet name':self.search_by(x,y),
+        # }
         ]
         self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom',
                                       md_bg_color='orange')
@@ -72,14 +75,20 @@ class IssueList(MDScreen):
             Create a database object in main and pass it to here
         """
         self.issue_database = kwargs.get('db1', None)
+        self.search(search=False)
+        print('Issue list', self.issue_data)
         if self.issue_database is None:
             raise ValueError("No database object provided to issue_list screen")
         
-    def search(self, text, search = True):
+    def search(self, text='', search = True):
         if search:
-            fetched = self.issue_database.fetchall(f'SELECT * FROM transactions WHERE {self.searchby} LIKE ?', (f'%{text}%',))
+            fetched = self.issue_database.fetchall(f'SELECT * FROM transactions WHERE {self.searchby} LIKE ?', (f'%{text}%',), show_error=True)
         else:
             fetched = self.issue_database.fetchall('SELECT * FROM transactions')
+        
+        print(fetched)
+        if isinstance(fetched, int):
+            return
         self.issue_data.clear()
             
 
@@ -99,6 +108,7 @@ class IssueList(MDScreen):
             )
 
     def search_by(self, hint, plate_text):
+        print(hint, plate_text)
         self.searchby = hint
         self.ids.search_plate.text = plate_text
         self.options.dismiss()

@@ -1,0 +1,39 @@
+<BookDetailDialog>
+    MDDialogHeadlineText:
+        text: 'Details'
+    MDDivider:
+
+    MDDialogContentContainer:
+        size_hint_y: None
+        height: "250dp"
+        size_hint_x: 1
+        MDScrollView:
+            do_scroll_x: False
+            scroll_wheel_distance: '30dp'
+            smooth_scroll_end: 10
+            bar_width: '3dp'
+            bar_inactive_color: 0, 0, 0, 1
+
+            MDLabel:
+                text: root.text
+                markup: True
+                size_hint_y: None
+                height: self.texture_size[1]
+                padding: '10dp', '10dp'
+                text_size: self.width, None
+    
+    MDDialogButtonContainer:
+        MDButton:
+            adaptive_size: True
+            pos_hint: {'center_x': 0.8}
+            on_release: root.move_to_issue()
+            MDButtonText:
+                text: 'Issue'
+        
+        MDButton:
+            adaptive_size: True
+            pos_hint: {'center_x': 0.95}
+            on_release: root.dismiss()
+            MDButtonText:
+                text: 'Close'
+

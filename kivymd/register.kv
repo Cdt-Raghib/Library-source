@@ -23,16 +23,19 @@
         MDIconLabel2:
             pos_hint: {'center_x':0.5}
         MDTextField:
+            id: name_register
             MDTextFieldHintText:
                 text: 'Cadet Name'
         
         MDTextField:
+            id: cadet_no_register
             MDTextFieldMaxLengthText:
                 max_text_length: 4
             MDTextFieldHintText:
                 text: 'Cadet No.'
         
         MDTextField:
+            id: batch_register
             MDTextFieldHintText:
                 text: 'Batch'
         
@@ -40,7 +43,7 @@
             size_hint: None, None
             size: 110, 50
             pos_hint: {'center_x':0.5}
-            
+            on_press: root.register_user()
             MDButtonText:
                 text: 'Register'
             

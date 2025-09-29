@@ -4,29 +4,46 @@ from kivymd.uix.screen import MDScreen
 from kivy.properties import StringProperty
 
 #version: 2.0
-
+"""
+Fix it
+"""
 class DepositMultiple(MDScreen):
     help = StringProperty()
     depo_info = StringProperty('Book name :---\nIssued by    :---')
+    db = None
 
     def deposit(self, numbers):
-        print(f"Depositing multiple books: {numbers.text}")
+        nums = numbers.split(',')
+        self.db = self.parent.parent.parent.database
+        for f in nums:
+            f.replace(' ', '')
+            self.db.execute('DELETE FROM transactions WHERE book_no = ?', (int(f),), on_error=f'<ec>: Record not found {f}',\
+                            on_success='Successfully deposited')
 
-    def search_in_issue(self, book_no):
-        pass
 
 class DepositSingle(MDScreen):
     help = StringProperty()
-    depo_info = StringProperty('Book name :---\nIssued by    :---')
+    depo_info = StringProperty('Book name :---\nIssued to    :---')
+    db = None
 
     def deposit(self, number):
-        print(f"Depositing single book: {number.text}")
-    
+        if self.db is None:
+            return
+        self.db.execute('DELETE FROM transactions WHERE book_no = ?', (number.text,), on_error='<ec>: Record not found')
+        
+        
     def search_in_issue(self, book_no):
-        pass
+        self.db = self.parent.parent.parent.database
+        issue = self.db.fetchone('SELECT book_no, cadet_no FROM transactions WHERE book_no = ?', (book_no,), show_error = False)
+        if isinstance(issue, int) or issue is None:
+            return
+        self.depo_info = f"Book name : {issue[0]}\nIssued to    : {issue[1]}"
+        
 
 
 class DepositScreen(MDScreen):
+    database = None
+
     def switch_content(self, instance_tabs, instance_tab, instance_tab_label):
         """Called when a secondary tab is switched."""
         tab_text = instance_tab.children[0].children[0].text
@@ -38,22 +55,7 @@ class DepositScreen(MDScreen):
     
     def app_request(self, **kwargs):
         self.ids.tab.switch_tab(text = self.ids.text1.text)
+        self.database = kwargs.get('db1')
+
 
 Builder.load_file('kivymd/deposit.kv')
-
-# class TestApp(MDApp):
-#     def build(self):
-#         self.md_bg_color = self.theme_cls.backgroundColor
-#         self.theme_cls.primary_palette = 'Snow'
-#         self.theme_cls.theme_style = 'Dark'
-#         self.theme_cls.secondary_palette = 'Teal'
-#         return Builder.load_file('kivymd/deposit.kv')
-
-#     def on_start(self):
-#         # Default to "Single" tab
-#         print(self.root.ids.text1.text)
-#         self.root.ids.tab.switch_tab(text=self.root.ids.text1.text)
-
-
-# if __name__ == '__main__':
-#     TestApp().run()

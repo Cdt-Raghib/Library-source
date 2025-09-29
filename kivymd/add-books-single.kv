@@ -60,26 +60,34 @@
                 
             ATextField:
                 id: book_name_add
+                required: True
+                hint_text: 'Title'
                 MDTextFieldHintText:
-                    text: 'Book name'
+                    text: 'Title'
+
             
             ATextField:
                 id: book_no_add
+                required: True
+                hint_text: 'Book no.'
                 MDTextFieldHintText:
                     text: 'Book no.'
             
             ATextField:
                 id: book_writer_add
+                hint_text: 'Author'
                 MDTextFieldHintText:
-                    text: 'Writer'
+                    text: 'Author'
             
             ATextField:
                 id: book_catagory_add
+                hint_text: 'Category'
                 MDTextFieldHintText:
-                    text: 'Catagory'
+                    text: 'Category'
             
             ATextField:    
                 id: book_donate_add
+                hint_text: 'Donated by'
                 MDTextFieldHintText:
                     text: 'Donated by'
                 
@@ -90,6 +98,7 @@
             MDButton:
                 style: 'filled'
                 pos_hint: {'center_x': 0.5}
+                on_press: root.add_book()
                 MDButtonIcon:
                     icon: 'plus'
                 MDButtonText:

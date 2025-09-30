@@ -1,7 +1,6 @@
 from kivymd.app import MDApp
 from kivymd.uix.navigationdrawer import MDNavigationDrawerItem,MDNavigationDrawerItemLeadingIcon,MDNavigationDrawerItemText, MDNavigationDrawerDivider
 from kivy.lang import Builder
-from kivy.properties import BooleanProperty 
 
 from screens.login import LoginScreen
 from screens.add_books import AddBooks
@@ -9,7 +8,7 @@ from screens.register import RegisterUser
 from screens.issue_books import IssueBooks
 from screens.deposit import DepositScreen
 from screens.issue_list import IssueList
-from screens.home import BookList
+from screens.home2 import BookList
 #from kivymd.uix.snackbar import MDSnackbar
 from utils.databasemanager import DatabaseManager
 
@@ -97,6 +96,8 @@ class MainApp(MDApp):
         s = s.replace(' ', '_')
         return s
     
+    def refresh(self):
+        self.root.ids.screen_manager.current_screen.refresh(main=self)
     def on_stop(self):
         librarydb.commit()
         accountdb.commit()

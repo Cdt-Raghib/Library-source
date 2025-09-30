@@ -26,6 +26,9 @@ class IssueBooks(MDScreen):
         if self.database is None:
             raise ValueError('No database provided')
     
+    def refresh(self, **kwargs):
+        pass
+    
     def set_book_no(self, book_no):
         self.ids.book_no.text = str(book_no)
         
@@ -65,7 +68,7 @@ class IssueBooks(MDScreen):
             return False
 
         r4 = self.database.fetchone('SELECT token FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],))
-        if r4 in (101, 102):
+        if r4 in (101, 102) or r4 is None:
             return False
         tokens = r4['token']
         if tokens<=0:
@@ -104,7 +107,7 @@ class IssueBooks(MDScreen):
             self.issue_cadet_batch = ''
             return
         self.issue_cadet_name = ''
-        book = self.books.get(int(book_no.text), 'title, author, category', show_error=False)
+        book = self.books.get(book_no_int, 'title, author, category', show_error=False)
         if isinstance(book, int) or book=='':
             return
         if len(book) == 0:

@@ -1,10 +1,19 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
 <BookCardView>
     id: book_card_view
+    theme_shadow_offset: "Custom"
+    theme_shadow_softness: "Custom"
     orientation: 'vertical'
+    ripple_behavior: True
+    theme_bg_color: 'Custom'
+    md_bg_color: 0.18, 0.25, 0.40, 0.90  # midnight blue with transparency
+    shadow_softness: 2
+    shadow_offset: (0, 2)
     size_hint: None, None
     size: '150dp', '250dp'
-    orientation: 'vertical'
     spacing: '5dp'
+    padding: '5dp'
+    style: 'elevated'
 
     MDIcon:
         icon: root.icon

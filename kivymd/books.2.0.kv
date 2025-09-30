@@ -1,0 +1,64 @@
+<BookList>:
+    name: 'book_list'
+    id: book_list_screen
+    md_bg_color: app.theme_cls.surfaceColor
+
+    MDBoxLayout:
+        id: boxlayout
+        orientation: 'vertical'
+        size_hint: 1, 1
+        padding: '5dp'
+        spacing: '15dp'
+
+        MDBoxLayout:
+            size_hint: 1, 0.15
+            spacing: '10dp'
+            pos_hint: {'top': 1}
+            MDTextField:
+                id: search_text
+                size_hint_x: 0.8
+                adaptive_height: True
+                on_text: root.search(search_text)
+                
+                MDTextFieldLeadingIcon:
+                    icon: 'magnify'
+                MDTextFieldHintText:
+                    text: 'Search books'
+            
+
+            MDButton:
+                radius: [dp(7),dp(7),dp(7),dp(7)]
+                theme_bg_color: 'Custom'
+                md_bg_color: 'orange'
+                on_release: root.open_options(self)
+
+                MDButtonIcon:
+                    icon: 'arrow-bottom-left-bold-outline'
+                MDButtonText:
+                    id: option_button_text
+                    text: 'Book no.'
+
+        MDScrollView:
+            id: scroll_view
+            do_scroll_x: False
+            scroll_wheel_distance: '30dp'
+            smooth_scroll_end: 10
+            bar_width: '5dp'
+            bar_inactive_color: 0, 0, 0, 1
+            
+            MDStackLayout:
+                id: book_layout
+                orientation: 'lr-tb'
+                spacing: '15dp'
+                padding: '5dp'
+                size_hint_y: None
+                adaptive_height: True
+
+            
+            
+            
+            
+                
+            
+
+

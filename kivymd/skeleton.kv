@@ -2,7 +2,7 @@
 # added background
 
 #:import Skeleton screens.skeleton.Skeleton
-
+#:import get_color_from_hex kivy.utils.get_color_from_hex
 # <MDLabel>:
 #     theme_text_color: 'Custom'
 
@@ -13,17 +13,18 @@ MDNavigationLayout:
                 source: "assets/img/background.jpg"  # put your image in the same folder
                 size_hint: 1, 1
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
             MDBoxLayout:
                 orientation: 'vertical'
 
                 MDTopAppBar:
                     id: app_bar
                     adaptive_height: True
-                    #pos_hint: {'top':1}
-                    elevation: 4
+                    theme_elevation_level: 'Custom'
+                    elevation_level: 4
                     disabled: not screen_manager.login_state
                     theme_bg_color: 'Custom'
-                    md_bg_color: rgba(0, 0.5, 0.8, 0.5)
+                    md_bg_color: app.theme_cls.backgroundColor#get_color_from_hex("#2E6DA4")
                     MDTopAppBarTitle:
                         text: 'Library'
                     
@@ -31,8 +32,18 @@ MDNavigationLayout:
                         MDActionTopAppBarButton:
                             icon: 'menu'
                             on_press: nav_drawer.set_state('toggle')
+
                 Skeleton:
                     id: screen_manager
+
+            MDFabButton:
+                icon: 'snowflake'
+                md_bg_color: get_color_from_hex("#4AA3DF")
+                theme_icon_color: 'Custom'
+                icon_color: 0.9, 0.95, 1, 1
+                theme_bg_color: 'Custom'
+                pos_hint: {"right": 0.95, "y": 0.05}
+                on_press: app.refresh()
 
     # Navigation Drawer Panel
     MDNavigationDrawer:

@@ -1,7 +1,6 @@
 from kivymd.uix.button import MDButton,  MDButtonText
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.app import MDApp
 from kivymd.uix.dialog import MDDialog,\
 MDDialogHeadlineText, MDDialogSupportingText, MDDialogButtonContainer
 from kivymd.uix.menu import MDDropdownMenu
@@ -33,10 +32,8 @@ class MyList(MDListItem):
                 ),
             MDDialogButtonContainer(
                 MDButton(
-                    MDButtonText(
-                        text='Close',
-                        on_release=lambda x:self.dial.dismiss()
-                    )
+                    MDButtonText(text='Close'),
+                    on_release=lambda x:self.dial.dismiss()
                 )
             )
         )
@@ -94,15 +91,18 @@ class IssueList(MDScreen):
 
         for row in fetched:
             row = dict(row)
+            print(row['cadet_no'], row['book_no'])
             cn = self.issue_database.fetchone('SELECT cadet_name FROM users WHERE cadet_no = ?', (row['cadet_no'],))
-            bn = self.issue_database.fetchone('SELECT book_name FROM books WHERE book_no = ?', (row['book_no'],))
+            bn = self.issue_database.fetchone('SELECT title FROM books WHERE book_no = ?', (row['book_no'],))
+            print('Issue-list: ',bn,cn)
+        
             self.issue_data.append(
                 {
                     'viewclass': 'MyList',
-                    'book_no': row['book_no'],
-                    'cadet_no': row['cadet_no'],
+                    'book_no': str(row['book_no']),
+                    'cadet_no': str(row['cadet_no']),
                     'issue_date': row['issue_date'],
-                    'book_name': bn['book_name'] if bn else 'Unknown',
+                    'book_name': bn['title'] if bn else 'Unknown',
                     'cadet_name': cn['cadet_name'] if cn else 'Unknown',
                 }
             )

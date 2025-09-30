@@ -23,7 +23,6 @@
         
         MDTextField:
             id: deposit_multiple_book
-            on_text: root.search_in_issue(deposit_multiple_book.text)
 
             MDTextFieldHintText:
                 text: 'Enter book no. (e.g. 100,101,102)'
@@ -31,16 +30,6 @@
             MDTextFieldHelperText:
                 text: root.help 
                 mode: 'on_error'
-        
-        MDLabel:
-            text: 'Info'
-            theme_font_size: 'Custom'
-            font_size: '24dp'
-            padding: '0dp', '20dp', '0dp', '15dp'
-        
-        MDLabel:
-            text: root.depo_info
-            adaptive_height: True
             
         MDButton:
             style: 'filled'

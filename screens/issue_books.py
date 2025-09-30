@@ -2,6 +2,7 @@ from kivymd.uix.screen import MDScreen
 from kivy.lang import Builder
 from kivy.properties import StringProperty
 from utils.book import Books
+from utils.notificationbar import NotificationBar
 
 '''
 Feature to be added:
@@ -37,30 +38,38 @@ class IssueBooks(MDScreen):
     def fetch_info(self):
         for f in self.children[0].children[0].children:
             if f.__class__.__name__ == "ITextField":
-                self.input_info[self.rectify(f.hint_text)] = f.text
+                if self.rectify(f.hint_text) in ('cadet_no', 'book_no'):
+                    self.input_info[self.rectify(f.hint_text)] = f.text
 
     def move_next(self, inst):
-        # self.input_info[self.rectify(inst.hint_text)] = inst.text
-        print(self.children[0].children[0].children)
-        ind = self.children[0].children[0].children.index(inst)
-        print(f'found ind:{ind}')
-        if ind!=-1 and ind-1>0:
-            self.children[0].children[0].children[ind-1].focus = True
+        fields = [f for f in self.children[0].children[0].children if f.__class__.__name__ == "ITextField"]
+        if inst in fields:
+            idx = fields.index(inst)
+            if idx + 1 < len(fields):
+                fields[idx + 1].focus = True
     
     def check_validity(self):
-        r = self.database.execute('SELECT cadet_no FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],), on_error='User not found. Register first.')
-        r2 = self.database.execute('UPDATE books SET stock=(stock-1) WHERE book_no=?', (self.input_info['book_no'], ), on_error='<ec>:Failed to update stock.')
-        if isinstance(r, int) or isinstance(r2, int):
+        cadet_no = self.input_info.get('cadet_no')
+        book_no = self.input_info.get('book_no')
+
+        if not cadet_no or not book_no:
+            NotificationBar().open_with_text(text='Fill all required fields', error=True)
             return False
-        ch = self.books.get(int(self.input_info['book_no']), 'title, author, category', on_error='Book not found. Check book no. or add book', show_error=True)
-        if isinstance(ch, int):
+        
+        r = self.database.execute('SELECT cadet_no FROM users WHERE cadet_no=?;', (self.input_info['cadet_no'],), on_error='User not found. Register first.')
+        if r in (101, 102): #101, 102 are error codes
+            return False
+        r2 = self.database.fetchone('SELECT stock FROM books WHERE book_no=?', (self.input_info['book_no'], ), on_error='<ec>:Failed to get stock.')
+        if r2['stock']<=0 or r2 in (101,102):
+            NotificationBar().open_with_text(text='Book is out of stock', error=True)
             return False
 
-        r3 = self.database.execute('SELECT token FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],), on_error='Cannot take more than 2 books.')
-        if isinstance(r3, int):
+        r4 = self.database.fetchone('SELECT token FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],))
+        if r4 in (101, 102):
             return False
-        tokens = r3.fetchone()['token']
+        tokens = r4['token']
         if tokens<=0:
+            NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
             return False
         return True
     
@@ -69,23 +78,27 @@ class IssueBooks(MDScreen):
         print(self.input_info)
         if not self.check_validity():
             return
-        columns = ''
-        placeholders = ''
-        for key, value in self.input_info.items():
-            columns += f'{key}, '
-            placeholders += f'{value}, '
-        columns = columns[:-2]
-        placeholders = placeholders[:-2]
+        columns = ', '.join(self.input_info.keys())
+        placeholders = ', '.join(['?'] * len(self.input_info))
         query = f'INSERT INTO transactions ({columns}) VALUES ({placeholders});'
-        result = self.database.execute(query, on_error='<ec>:Failed to issue book.')
-        cut_token = self.database.execute('UPDATE users SET token=token-1 WHERE cadet_no=?', (self.input_info['cadet_no'],), on_error='<ec>:Failed to update token.')
+        values = tuple(self.input_info.values())
+        result = self.database.execute(query, values, on_error='<ec>:Failed to issue book.')
         
+        if isinstance(result, int):
+            return
+        cut_token = self.database.execute('UPDATE users SET token=token-1 WHERE cadet_no=?', (self.input_info['cadet_no'],), on_error='<ec>:Failed to update token.')
+        self.database.execute(
+            'UPDATE books SET stock=stock-1 WHERE book_no=?',
+            (self.input_info['book_no'],),
+            on_error='<ec>:Failed to update stock.'
+        )
         if not (isinstance(result, int) or isinstance(cut_token, int)):
+            NotificationBar().open_with_text(text='Issued successfully')
             self.database.commit()
     
     def search_book(self, book_no):
         try:
-            int(book_no.text)
+            book_no_int = int(book_no.text)
         except ValueError:
             self.issue_cadet_name = 'Invalid book no.'
             self.issue_cadet_batch = ''

@@ -4,6 +4,7 @@ import datetime
 from kivy.lang import Builder
 from kivymd.uix.snackbar import MDSnackbar
 from kivy.properties import StringProperty
+from utils.notificationbar import NotificationBar
 
 Builder.load_file('kivymd/error-bar.kv')
 class ErrorBar(MDSnackbar):
@@ -57,7 +58,7 @@ class DatabaseManager:
             return 102
         
         if on_success!='':
-            ErrorBar().open_with_text(on_success)
+            NotificationBar().open_with_text(on_success)
             
         return cursor  # Caller can fetch data or commit
 

@@ -2,24 +2,36 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 from kivy.properties import StringProperty
-
+from utils.notificationbar import NotificationBar
 #version: 2.0
 """
 Fix it
 """
 class DepositMultiple(MDScreen):
     help = StringProperty()
-    depo_info = StringProperty('Book name :---\nIssued by    :---')
     db = None
 
     def deposit(self, numbers):
         nums = numbers.split(',')
         self.db = self.parent.parent.parent.database
+        self.err_list = []
+        count = 0
         for f in nums:
             f.replace(' ', '')
-            self.db.execute('DELETE FROM transactions WHERE book_no = ?', (int(f),), on_error=f'<ec>: Record not found {f}',\
-                            on_success='Successfully deposited')
+            cn = self.db.fetchone('SELECT cadet_no FROM transanctions WHERE book_no = ?', (f,), show_error=False)
+            if isinstance(cn, int):
+                self.err_list.append(f)
+                continue
+            self.db.execute('UPDATE users SET token=token+1 WHERE cadet_no = ?', (cn,), show_error=False)
+            self.db.execute('UPDATE books SET stock=stock+1 WHERE book_no = ?', (f,), show_error=False)
+            a = self.db.execute('DELETE FROM transactions WHERE book_no = ?', (int(f),), show_error=False)
+            count += 1
+        
+        if len(self.err_list) > 0:
+            NotificationBar.open_with_text(text=f"Error with: {self.err_list}\nSuccessful: {count}", error=True)
 
+        else:
+            NotificationBar().open_with_text(text=f"{count} books successfully deposited")
 
 class DepositSingle(MDScreen):
     help = StringProperty()
@@ -29,15 +41,20 @@ class DepositSingle(MDScreen):
     def deposit(self, number):
         if self.db is None:
             return
-        self.db.execute('DELETE FROM transactions WHERE book_no = ?', (number.text,), on_error='<ec>: Record not found')
+        self.db.execute('UPDATE users SET token=token+1 WHERE cadet_no=?', (self.issue['cadet_no'],), on_error='<ec>: User token update failed')
+        self.db.execute('UPDATE books SET stock=stock+1 WHERE book_no = ?', (number.text,), on_error='<ec>: Stock update failed')
+        self.db.execute('DELETE FROM transactions WHERE book_no = ?', (number.text,), on_error='<ec>: Record not found',\
+                        on_success='Successfully deposited')
         
         
     def search_in_issue(self, book_no):
         self.db = self.parent.parent.parent.database
-        issue = self.db.fetchone('SELECT book_no, cadet_no FROM transactions WHERE book_no = ?', (book_no,), show_error = False)
-        if isinstance(issue, int) or issue is None:
+        self.issue = self.db.fetchone('SELECT cadet_no FROM transactions WHERE book_no = ?', (book_no,), show_error = False)
+        if isinstance(self.issue, int) or self.issue is None:
             return
-        self.depo_info = f"Book name : {issue[0]}\nIssued to    : {issue[1]}"
+        cname = self.db.fetchone('SELECT cadet_name FROM users WHERE cadet_no=?', (self.issue['cadet_no'],))
+        bname = self.db.fetchone('SELECT title FROM books WHERE book_no=?', (int(book_no),))
+        self.depo_info = f"Book name  : {bname['title']}\nIssued to    : {cname['cadet_name']} ({self.issue['cadet_no']})"
         
 
 

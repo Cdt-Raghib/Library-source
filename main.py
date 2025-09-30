@@ -26,7 +26,7 @@ accountdb.executescript('SQL/accounts.sql')
 
 class MainApp(MDApp):
     app_screens1 = {
-        'Home':'home',
+        'Home':'bookshelf',
         'Issue Books':'book-arrow-up-outline',
         'Deposit Books': 'book-arrow-down-outline',
         'Add Books':'book-plus-outline',
@@ -69,7 +69,7 @@ class MainApp(MDApp):
             )
 
     def on_start(self):
-        self.app_screens_layout = [
+        self.app_screens_layout = [ # Dont break serial
             LoginScreen(name='login'),
             AddBooks(name='add_books'),
             RegisterUser(name='register_user'),
@@ -78,7 +78,6 @@ class MainApp(MDApp):
             IssueList(name='issue_list'),
             BookList(name='home')
         ]
-        # self.app_screens_layout[4].ids.tab.switch_tab(text=self.app_screens_layout[4].ids.text1.text)
         self.add_nav_item(self.app_screens1)
         self.root.ids.nav_drawer_menu.add_widget(MDNavigationDrawerDivider())
         self.add_nav_item(self.app_screens2)

@@ -1,26 +1,19 @@
-<ErrorBar>
+<NotificationBar>
     size_hint_x: 0.5
     pos_hint: {"center_x": 0.5}
     size_hint_y: None
     on_open: root.play_sound()
     y: dp(48)
 
-    MDSnackbarText:
-        text: 'Error'
-    
     MDSnackbarSupportingText:
         text: root.text
-        padding: [0, 0, 0, dp(40)]
         theme_text_color: 'Custom'
-        text_color: 'crimson'
+        text_color: root.color
+        padding: [0, 0, 0, dp(56)]
     
     MDSnackbarButtonContainer:
         MDSnackbarActionButton:
-            on_release: root.open_help()
+            on_release: root.action()
             MDSnackbarActionButtonText:
-                text: 'help'
-        
-        MDSnackbarCloseButton:
-            icon: 'close'
-            on_release: root.dismiss()
+                text: root.button_text
     

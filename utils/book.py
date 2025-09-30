@@ -24,14 +24,16 @@ class Books:
         #     # Depricated
         #     bntext = text.split('[bn]', 1)[1].split('[/bn]', 1)[0]
         #     text.replace(f'[bn]{bntext}[/bn]',avro.parse(bntext))
-        if text is not None:
-            if '[end_comment]' in text:
-                d = []
-                comments = text.split('[end_comment]')
-                for f in comments:
-                    cn = f.split('>')[0].removeprefix('<')
-                    d.append({'cadet_no':cn, 'comment':f.split('>')[1]})
-                return d
+        if text is None:
+            return ''
+        
+        if '[end_comment]' in text:
+            d = []
+            comments = text.split('[end_comment]')
+            for f in comments:
+                cn = f.split('>')[0].removeprefix('<')
+                d.append({'cadet_no':cn, 'comment':f.split('>')[1]})
+            return d
         return text
 
     def _encode(self, text):
@@ -40,16 +42,30 @@ class Books:
         """
         return text
 
-    def get(self, book_no, key, show_error=True, on_error=''): 
+    def get(self, book_no, key, show_error=True, on_error=''):
+        """
+        Returns a dictionay object.
+        Retruns '' if not found.
+        Set key to '' if value was None i.e. for empty row
+        """ 
         query = f"SELECT {key} FRoM books WHERE book_no = ?"
         value = self.database.fetchone(query, (book_no,), on_error=on_error, show_error=show_error)
         if isinstance(value, int):
             return value
         if value is None:
             return ''
-        return self._decode(dict(value))
+        
+        result = {}
+        dv = dict(value)
+        for k,v in dv.items():
+            result[k] = self._decode(v)
+        return result
     
     def get_all(self, show_error = True, on_error=''):
+        """
+        Returns a list with dictionary [{}].
+        Empty list if not found []
+        """
         query = 'SELECT * FROM books'
         rows = self.database.fetchall(query, show_error=show_error, on_error=on_error)
         result  = []

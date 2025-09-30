@@ -1,7 +1,7 @@
 from kivymd.uix.screen import MDScreen
 from kivy.lang import Builder
 from utils.book import Books
-
+from utils.notificationbar import NotificationBar
 '''
 Feature to be added:
     multiple books add
@@ -17,15 +17,16 @@ class AddBooks(MDScreen):
         self.books = Books(self.database)
 
     def move_next(self, inst):
-        print(self.children[0].children[0].children)
-        ind = self.children[0].children[0].children.index(inst)
-        print(f'found ind:{ind}')
-        if ind!=-1 and ind-1>0:
-            self.children[0].children[0].children[ind-1].focus = True
+        fields = [f for f in self.children[0].children[0].children if f.__class__.__name__ == "ATextField"]
+        if inst in fields:
+            idx = fields.index(inst)
+            if idx + 1 < len(fields):
+                fields[idx + 1].focus = True
     
     def add_book(self):
         self.fetch_info()
         self.books.add(self.input_info)
+        NotificationBar().open_with_text(text='Book added successfully.')
 
     def rectify(self, key):
         key = key.lower()

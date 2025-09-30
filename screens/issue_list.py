@@ -1,13 +1,15 @@
 from kivymd.uix.button import MDButton,  MDButtonText
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.app import MDApp
 from kivymd.uix.dialog import MDDialog,\
 MDDialogHeadlineText, MDDialogSupportingText, MDDialogButtonContainer
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.list import MDListItem
 from kivy.properties import StringProperty, ListProperty
 
+"""
+Fix it
+"""
 Builder.load_file('kivymd/issue-list.kv')
 class MyList(MDListItem):
     book_name = StringProperty('')
@@ -30,10 +32,8 @@ class MyList(MDListItem):
                 ),
             MDDialogButtonContainer(
                 MDButton(
-                    MDButtonText(
-                        text='Close',
-                        on_release=lambda x:self.dial.dismiss()
-                    )
+                    MDButtonText(text='Close'),
+                    on_release=lambda x:self.dial.dismiss()
                 )
             )
         )
@@ -42,14 +42,14 @@ class MyList(MDListItem):
 class IssueList(MDScreen):
     issue_database = None
     issue_data = ListProperty([])
-    searchby = StringProperty('Cadet no')
+    searchby = StringProperty('cadet_no')
     
     def open_options(self, caller):
         self.items = [
-        {
-        'text':'Book name',
-        'on_release':lambda x='book_name', y='Book name':self.search_by(x,y),
-        },
+        # {
+        # 'text':'Title',
+        # 'on_release':lambda x='title', y='Title':self.search_by(x,y),
+        # },
         {
         'text':'Book no.',
         'on_release':lambda x='book_no', y='Book no.':self.search_by(x,y),
@@ -58,10 +58,10 @@ class IssueList(MDScreen):
         'text':'Cadet no.',
         'on_release':lambda x='cadet_no', y='Cadet no.':self.search_by(x,y),
         },
-        {
-        'text':'Cadet name',
-        'on_release':lambda x='cadet_name', y='Cadet name':self.search_by(x,y),
-        }
+        # {
+        # 'text':'Cadet name',
+        # 'on_release':lambda x='cadet_name', y='Cadet name':self.search_by(x,y),
+        # }
         ]
         self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom',
                                       md_bg_color='orange')
@@ -72,33 +72,43 @@ class IssueList(MDScreen):
             Create a database object in main and pass it to here
         """
         self.issue_database = kwargs.get('db1', None)
+        self.search(search=False)
+        print('Issue list', self.issue_data)
         if self.issue_database is None:
             raise ValueError("No database object provided to issue_list screen")
         
-    def search(self, text, search = True):
+    def search(self, text='', search = True):
         if search:
-            fetched = self.issue_database.fetchall(f'SELECT * FROM transactions WHERE {self.searchby} LIKE ?', (f'%{text}%',))
+            fetched = self.issue_database.fetchall(f'SELECT * FROM transactions WHERE {self.searchby} LIKE ?', (f'%{text}%',), show_error=True)
         else:
             fetched = self.issue_database.fetchall('SELECT * FROM transactions')
+        
+        print(fetched)
+        if isinstance(fetched, int):
+            return
         self.issue_data.clear()
             
 
         for row in fetched:
             row = dict(row)
+            print(row['cadet_no'], row['book_no'])
             cn = self.issue_database.fetchone('SELECT cadet_name FROM users WHERE cadet_no = ?', (row['cadet_no'],))
-            bn = self.issue_database.fetchone('SELECT book_name FROM books WHERE book_no = ?', (row['book_no'],))
+            bn = self.issue_database.fetchone('SELECT title FROM books WHERE book_no = ?', (row['book_no'],))
+            print('Issue-list: ',bn,cn)
+        
             self.issue_data.append(
                 {
                     'viewclass': 'MyList',
-                    'book_no': row['book_no'],
-                    'cadet_no': row['cadet_no'],
+                    'book_no': str(row['book_no']),
+                    'cadet_no': str(row['cadet_no']),
                     'issue_date': row['issue_date'],
-                    'book_name': bn['book_name'] if bn else 'Unknown',
+                    'book_name': bn['title'] if bn else 'Unknown',
                     'cadet_name': cn['cadet_name'] if cn else 'Unknown',
                 }
             )
 
     def search_by(self, hint, plate_text):
+        print(hint, plate_text)
         self.searchby = hint
         self.ids.search_plate.text = plate_text
         self.options.dismiss()

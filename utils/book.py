@@ -6,6 +6,10 @@ class Books:
     Support for bangla will be added later
     Using queries directly
     """
+    """
+    Fix:
+        return '' instead of None
+    """
     keys = ['book_no', 'icon', 'title', 'author', 'donated_by', 'average_rating','stock', 'comments', 'category']
     database = None
 
@@ -13,14 +17,23 @@ class Books:
         self.database = db
     
     def _decode(self, text):
-        if not isinstance(text, str):
-            return text
+        # if not isinstance(text, str):
+        #     return text
         
-        if '[bn]' in text:
-            # Depricated
-            bntext = text.split('[bn]', 1)[1].split('[/bn]', 1)[0]
-            text.replace(f'[bn]{bntext}[/bn]',avro.parse(bntext))
+        # if '[bn]' in text:
+        #     # Depricated
+        #     bntext = text.split('[bn]', 1)[1].split('[/bn]', 1)[0]
+        #     text.replace(f'[bn]{bntext}[/bn]',avro.parse(bntext))
+        if text is None:
+            return ''
         
+        if '[end_comment]' in text:
+            d = []
+            comments = text.split('[end_comment]')
+            for f in comments:
+                cn = f.split('>')[0].removeprefix('<')
+                d.append({'cadet_no':cn, 'comment':f.split('>')[1]})
+            return d
         return text
 
     def _encode(self, text):
@@ -30,17 +43,43 @@ class Books:
         return text
 
     def get(self, book_no, key, show_error=True, on_error=''):
-        if key not in self.keys:
-            raise ValueError(f"Unknown option: {key}. Permitted options are: {self.keys}")  
+        """
+        Returns a dictionay object.
+        Retruns '' if not found.
+        Set key to '' if value was None i.e. for empty row
+        """ 
         query = f"SELECT {key} FRoM books WHERE book_no = ?"
         value = self.database.fetchone(query, (book_no,), on_error=on_error, show_error=show_error)
-        return self._decode(value)
+        if isinstance(value, int):
+            return value
+        if value is None:
+            return ''
+        
+        result = {}
+        dv = dict(value)
+        for k,v in dv.items():
+            result[k] = self._decode(v)
+        return result
+    
+    def get_all(self, show_error = True, on_error=''):
+        """
+        Returns a list with dictionary [{}].
+        Empty list if not found []
+        """
+        query = 'SELECT * FROM books'
+        rows = self.database.fetchall(query, show_error=show_error, on_error=on_error)
+        result  = []
+        for row in rows:
+            row = dict(row)
+            row['comments'] = self._decode(row['comments'])
+            result.append(row)
+        
+        return result
 
     def search(self, search_in, value, get='*') -> list:
         if search_in not in self.keys:
             raise ValueError(f"Unknown option: {search_in}. Permitted options are: {self.keys}")
-        if get not in self.keys:
-            raise ValueError(f"Unknown option: {get}. Permitted options are: {self.keys}")
+
         query = f"SELECT {get} FROM books WHERE {search_in} LIKE ?"
         results = self.database.fetchall(query, (f'%{value}%',), show_error=False)
         if isinstance(results, int):
@@ -71,22 +110,20 @@ class Books:
 
     def add(self, book_info: dict, commit=True) -> int:
         """
-        book_info should contain all keys in self.keys except 'available'
-        'available' will be set to 'stock' value
         Returns error code from database.execute() if any error occurs
         Otherwise returns None
         """
         columns = ''
         placeholders = ''
         for key,value in book_info.items():
-            column += f'{key}, '
-            placeholders += f'{value}, '
+            columns += f'{key}, '
+            placeholders += f'"{value}", ' if key not in ('donated_by', 'book_no') else f'{value}, '
         
         columns = columns.rstrip(', ')
         placeholders = placeholders.rstrip(', ')
-
         query = f"INSERT INTO books ({columns}) VALUES ({placeholders});"
-        result = self.database.execute(query, on_error='<ec>:Book already exists.')
+        print(query)
+        result = self.database.execute(query, on_error='')#<ec>: Book already exists.
         if isinstance(result, int):
             return result
         if commit:

@@ -21,7 +21,7 @@
     MDScrollView:
         do_scroll_x: False
         size_hint: 1, 0.8
-        pos_hint: {'top':0.9}
+        pos_hint: {'top':0.85}
         scroll_wheel_distance: '30dp'
         smooth_scroll_end: 10
         bar_width: '5dp'
@@ -48,27 +48,33 @@
                 color: self.theme_cls.primaryColor
 
             ITextField:
+                id: book_no
                 on_text: root.search_book(self)
+                hint_text: 'Book No.'
                 MDTextFieldHintText:
                     text: 'Book No.'
 
             ITextField:
                 id: book_name
+                hint_text: 'Title'
                 MDTextFieldHintText:
-                    text: 'Book Name'
+                    text: 'Title'
             ITextField:
                 id: author
+                hint_text: 'Author'
                 MDTextFieldHintText:
                     text: 'Author'
             ITextField:
                 id: category
+                hint_text: 'Category'
                 MDTextFieldHintText:
-                    text: 'Catagory'
+                    text: 'Category'
             
             MDDivider:
             
             ITextField:
                 id: cadet_no
+                hint_text: 'Cadet No.'
                 on_text: root.search(cadet_no)
                 MDTextFieldHintText:
                     text: 'Cadet No.'

@@ -38,6 +38,9 @@ class LoginScreen(MDScreen):
     def app_request(self, **kwargs):
         self.database = kwargs.get('db2')
     
+    def refresh(self, **kwargs):
+        pass
+    
     def load_info(self):
         rows = self.database.fetchall('SELECT username, password FROM accounts')
         if isinstance(rows, int):

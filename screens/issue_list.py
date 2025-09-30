@@ -76,7 +76,10 @@ class IssueList(MDScreen):
         print('Issue list', self.issue_data)
         if self.issue_database is None:
             raise ValueError("No database object provided to issue_list screen")
-        
+    
+    def refresh(self, **kwargs):
+        self.search(search=False)
+
     def search(self, text='', search = True):
         if search:
             fetched = self.issue_database.fetchall(f'SELECT * FROM transactions WHERE {self.searchby} LIKE ?', (f'%{text}%',), show_error=True)

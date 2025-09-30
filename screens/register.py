@@ -13,6 +13,9 @@ class RegisterUser(MDScreen):
     def app_request(self, **kwargs):
         self.database = kwargs.get('db1')
     
+    def refresh(self, **kwargs):
+        pass
+
     def register_user(self):
         info = {
             'name': self.ids.name_register.text,

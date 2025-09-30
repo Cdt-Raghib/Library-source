@@ -57,8 +57,7 @@ class Books:
         
         result = {}
         dv = dict(value)
-        for k,v in dv.items():
-            result[k] = self._decode(v)
+        result = {k: self._decode(v) for k, v in dv.items()}
         return result
     
     def get_all(self, show_error = True, on_error=''):
@@ -68,6 +67,8 @@ class Books:
         """
         query = 'SELECT * FROM books'
         rows = self.database.fetchall(query, show_error=show_error, on_error=on_error)
+        if isinstance(rows, int):
+            return []
         result  = []
         for row in rows:
             row = dict(row)
@@ -113,17 +114,12 @@ class Books:
         Returns error code from database.execute() if any error occurs
         Otherwise returns None
         """
-        columns = ''
-        placeholders = ''
-        for key,value in book_info.items():
-            columns += f'{key}, '
-            placeholders += f'"{value}", ' if key not in ('donated_by', 'book_no') else f'{value}, '
-        
-        columns = columns.rstrip(', ')
-        placeholders = placeholders.rstrip(', ')
+        columns = ', '.join(book_info.keys())
+        placeholders = ', '.join(['?'] * len(book_info))
+        values = tuple(book_info.values())
+
         query = f"INSERT INTO books ({columns}) VALUES ({placeholders});"
-        print(query)
-        result = self.database.execute(query, on_error='')#<ec>: Book already exists.
+        result = self.database.execute(query, values, on_error='') 
         if isinstance(result, int):
             return result
         if commit:

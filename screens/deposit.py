@@ -32,19 +32,40 @@ class DepositMultiple(MDScreen):
 
         else:
             NotificationBar().open_with_text(text=f"{count} books successfully deposited")
+        self.db.commit()
 
 class DepositSingle(MDScreen):
     help = StringProperty()
     depo_info = StringProperty('Book name :---\nIssued to    :---')
     db = None
+    issue = None
 
-    def deposit(self, number):
+    def insert_comment(self, book_no, comment):
+        pc = self.db.fetchone('SELECT comments FROM books WHERE book_no=?', (book_no,))
+        if isinstance(pc, int):
+            return
+        pc = pc['comments']
+        pc = '' if pc is None else pc
+        print(pc)
+        pc += f'<{self.issue['cadet_no']}>{comment}[end_comment]'
+        print(pc)
+        return self.db.execute('UPDATE books SET comments=? WHERE book_no=?', (pc,book_no))
+
+    def deposit(self, number, comments):
         if self.db is None:
             return
-        self.db.execute('UPDATE users SET token=token+1 WHERE cadet_no=?', (self.issue['cadet_no'],), on_error='<ec>: User token update failed')
-        self.db.execute('UPDATE books SET stock=stock+1 WHERE book_no = ?', (number.text,), on_error='<ec>: Stock update failed')
-        self.db.execute('DELETE FROM transactions WHERE book_no = ?', (number.text,), on_error='<ec>: Record not found',\
-                        on_success='Successfully deposited')
+        a = self.db.execute('UPDATE users SET token=token+1 WHERE cadet_no=?', (self.issue['cadet_no'],), on_error='<ec>: User token update failed')
+        if isinstance(a, int):
+            return
+        a = self.db.execute('UPDATE books SET stock=stock+1 WHERE book_no = ?', (number.text,), on_error='<ec>: Stock update failed')
+        if isinstance(a, int):
+            return
+        self.insert_comment(number.text, comments.text)
+        a = self.db.execute('DELETE FROM transactions WHERE book_no = ?', (number.text,), on_error='<ec>: Record not found')
+        if isinstance(a, int):
+            return
+        NotificationBar().open_with_text(text='Deposited successfully.')
+        self.db.commit()
         
         
     def search_in_issue(self, book_no):
@@ -73,6 +94,9 @@ class DepositScreen(MDScreen):
     def app_request(self, **kwargs):
         self.ids.tab.switch_tab(text = self.ids.text1.text)
         self.database = kwargs.get('db1')
+    
+    def refresh(self, **kwargs):
+        pass
 
 
 Builder.load_file('kivymd/deposit.kv')

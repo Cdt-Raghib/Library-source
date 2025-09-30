@@ -29,7 +29,7 @@
             MDButton:
                 radius: [dp(7),dp(7),dp(7),dp(7)]
                 theme_bg_color: 'Custom'
-                md_bg_color: 'orange'
+                md_bg_color: 'blue'
                 on_release: root.open_options(self)
 
                 MDButtonIcon:
@@ -38,14 +38,21 @@
                     id: option_button_text
                     text: 'Book no.'
 
-            # MDDropDownItem:
-            #     size_hint: 0.2, None
-            #     height: '5dp'
-            #     on_release: root.open_options(self)
-
-            #     MDDropDownItemText:
-            #         id: item_text
-            #         text: 'Book no'
+        MDScrollView:
+            id: scroll_view
+            do_scroll_x: False
+            scroll_wheel_distance: '30dp'
+            smooth_scroll_end: 10
+            bar_width: '5dp'
+            bar_inactive_color: 0, 0, 0, 1
+            
+            MDStackLayout:
+                id: book_layout
+                orientation: 'lr-tb'
+                spacing: '15dp'
+                padding: '5dp'
+                size_hint_y: None
+                adaptive_height: True
 
             
             

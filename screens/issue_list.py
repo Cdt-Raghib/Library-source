@@ -46,10 +46,6 @@ class IssueList(MDScreen):
     
     def open_options(self, caller):
         self.items = [
-        # {
-        # 'text':'Title',
-        # 'on_release':lambda x='title', y='Title':self.search_by(x,y),
-        # },
         {
         'text':'Book no.',
         'on_release':lambda x='book_no', y='Book no.':self.search_by(x,y),
@@ -57,14 +53,9 @@ class IssueList(MDScreen):
         {
         'text':'Cadet no.',
         'on_release':lambda x='cadet_no', y='Cadet no.':self.search_by(x,y),
-        },
-        # {
-        # 'text':'Cadet name',
-        # 'on_release':lambda x='cadet_name', y='Cadet name':self.search_by(x,y),
-        # }
+        }
         ]
-        self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom',
-                                      md_bg_color='orange')
+        self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom')
         self.options.open()
 
     def app_request(self, **kwargs):

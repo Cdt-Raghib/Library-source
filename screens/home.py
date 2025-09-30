@@ -1,15 +1,12 @@
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.card import MDCard
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.stacklayout import MDStackLayout
 from kivy.properties import StringProperty
 from utils.book import Books
 from kivymd.uix.dialog import MDDialog
 """
-    Merge with other screens
-    Add refresh
+    Add refresh: Done
 """
 
 Builder.load_file('kivymd/book_card_view.kv')
@@ -56,7 +53,6 @@ class BookDetailDialog(MDDialog):
 class BookCardView(MDCard):
     icon = StringProperty('book-open-page-variant')
     text = StringProperty('')
-    # function = ObjectProperty()
 
 class BookList(MDScreen):
     keyword = 'book_no'
@@ -73,14 +69,16 @@ class BookList(MDScreen):
         self.load_books()
         self.init_book_cards()
     
+    def refresh(self, **kwargs):
+        self.init_book_cards(search=False)
+
     def load_books(self):
         """
         book loader:
             Books will be loaded from database(SQL) files.
         """
-
-        self.book_layout = MDStackLayout(orientation= 'lr-tb', spacing='15dp')
-        self.main_view = MDScrollView(do_scroll_x=False, scroll_distance='10dp', scroll_wheel_distance='20dp')
+        self.book_layout = self.ids.book_layout
+        self.main_view = self.ids.scroll_view
         self.books = Books(self._database)        
 
     def open_options(self, caller):
@@ -99,18 +97,17 @@ class BookList(MDScreen):
         }
         ]
         self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom',
-                                      md_bg_color='orange')
+                                      md_bg_color='blue')
         self.options.open()
     
     def init_book_cards(self, find='', search=False):
         rows = self.books.search(self.keyword, find) if search \
         else self.books.get_all(show_error=False)
         print(f'home: {rows}')
-        if len(self.ids.boxlayout.children)>1:
-            self.ids.boxlayout.remove_widget(self.ids.boxlayout.children[0])
-            self.main_view.remove_widget(self.main_view.clear_widgets())
-            self.book_layout.clear_widgets()
-
+        # if len(self.ids.boxlayout.children)>1:
+        #     self.ids.boxlayout.remove_widget(self.ids.boxlayout.children[0])
+        self.book_layout.clear_widgets()
+        
         for f in rows:
             print(f)
             self.card_view = BookCardView(on_release=lambda y, x=f:self.show_details(book_dict=x))
@@ -119,20 +116,13 @@ class BookList(MDScreen):
                 self.card_view.icon = f.get('icon')
             self.card_view.text = f.get('title')
             self.book_layout.add_widget(self.card_view)
-        
-        self.main_view.add_widget(self.book_layout)
-        self.ids.boxlayout.add_widget(self.main_view)
+            
 
     def search_by(self, keyword, item_text):
         # v.1.1
         self.keyword = keyword
         self.ids.option_button_text.text = item_text
         self.options.dismiss()
-    # def search_by(self, keyword, item_text):
-    #     v.1.0
-    #     self.keyword = keyword
-    #     self.ids.item_text.text = item_text
-    #     self.options.dismiss()
     
     def show_details(self, book_dict):
         dial = BookDetailDialog()
@@ -148,4 +138,3 @@ class BookList(MDScreen):
         
         self.init_book_cards(search=True, find=text)
         
-

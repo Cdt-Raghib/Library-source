@@ -24,6 +24,10 @@ class Books:
         #     # Depricated
         #     bntext = text.split('[bn]', 1)[1].split('[/bn]', 1)[0]
         #     text.replace(f'[bn]{bntext}[/bn]',avro.parse(bntext))
+        """
+        Comment format:
+        <cadet no(int)>...[end_comment]<cadet no>...[end_comment] 
+        """
         if text is None:
             return ''
         
@@ -31,6 +35,10 @@ class Books:
             d = []
             comments = text.split('[end_comment]')
             for f in comments:
+                if f=='':
+                    continue
+                print(f)
+                print(f.split('>'))
                 cn = f.split('>')[0].removeprefix('<')
                 d.append({'cadet_no':cn, 'comment':f.split('>')[1]})
             return d

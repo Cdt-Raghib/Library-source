@@ -1,6 +1,12 @@
 from kivymd.app import MDApp
-from kivymd.uix.navigationdrawer import MDNavigationDrawerItem,MDNavigationDrawerItemLeadingIcon,MDNavigationDrawerItemText, MDNavigationDrawerDivider
+from kivymd.uix.navigationdrawer import( 
+    MDNavigationDrawerItem,
+    MDNavigationDrawerItemLeadingIcon,
+    MDNavigationDrawerItemText, 
+    MDNavigationDrawerDivider
+)
 from kivy.lang import Builder
+from kivy.core.audio import SoundLoader
 
 from screens.login import LoginScreen
 from screens.add_books import AddBooks
@@ -8,8 +14,7 @@ from screens.register import RegisterUser
 from screens.issue_books import IssueBooks
 from screens.deposit import DepositScreen
 from screens.issue_list import IssueList
-from screens.home2 import BookList
-#from kivymd.uix.snackbar import MDSnackbar
+from screens.home import BookList
 from utils.databasemanager import DatabaseManager
 
 """
@@ -89,6 +94,7 @@ class MainApp(MDApp):
         self.root.ids.screen_manager.current = 'login'
 
     def set_screen(self, name):
+        self.root.ids.nav_drawer.set_state('close')
         self.root.ids.screen_manager.current = self.screenify(name)
 
     def screenify(self, name:str):
@@ -97,6 +103,8 @@ class MainApp(MDApp):
         return s
     
     def refresh(self):
+        s = SoundLoader.load('assets/audio/iced-magic.mp3')
+        s.play()
         self.root.ids.screen_manager.current_screen.refresh(main=self)
     def on_stop(self):
         librarydb.commit()

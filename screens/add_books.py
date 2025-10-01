@@ -24,9 +24,11 @@ class AddBooks(MDScreen):
                 fields[idx + 1].focus = True
     
     def add_book(self):
-        self.fetch_info()
-        self.books.add(self.input_info)
-        NotificationBar().open_with_text(text='Book added successfully.')
+        if not self.fetch_info():
+            return 
+        r = self.books.add(self.input_info)
+        if not isinstance(r, int):
+            NotificationBar().open_with_text(text='Book added successfully.')
 
     def rectify(self, key):
         key = key.lower()
@@ -35,13 +37,15 @@ class AddBooks(MDScreen):
         return key
     
     def fetch_info(self):
-        print(self.children[0].children[0].children)
         for f in self.children[0].children[0].children:
             if f.__class__.__name__ == "ATextField":
                 print(f.hint_text, f.text)
+                if f.required and f.text == '':
+                    NotificationBar().open_with_text(text='Fill all required fields', error=True)
+                    return False
                 self.input_info[self.rectify(f.hint_text)] = f.text
         
-        print(self.input_info)
+        return True
         
 
 # class TestApp(MDApp):

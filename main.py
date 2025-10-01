@@ -106,6 +106,7 @@ class MainApp(MDApp):
         s = SoundLoader.load('assets/audio/iced-magic.mp3')
         s.play()
         self.root.ids.screen_manager.current_screen.refresh(main=self)
+    
     def on_stop(self):
         librarydb.commit()
         accountdb.commit()

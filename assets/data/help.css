@@ -1,0 +1,67 @@
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial;line-height:1.5;color:#111}
+    body{
+        max-width:900px;
+        margin:36px auto;
+        padding:24px;
+        background:#fff;
+        border-radius:12px;
+        box-shadow:0 6px 30px rgba(17,24,39,0.07)
+    }
+    header{
+        display:flex;
+        align-items:center;
+        gap:16px
+    }
+    h1{
+        margin:0;
+        font-size:1.45rem
+    }
+    .meta{
+        color:#555;
+        font-size:0.95rem
+    }
+    section{
+        margin-top:20px
+    }
+    h2{
+        font-size:1.05rem;
+        margin-bottom:8px
+    }
+    ul{
+        margin:8px 0 8px 20px
+    }
+    ol{
+        margin:8px 0 8px 20px
+    }
+    code, pre{
+        background:#f6f8fa;
+        padding:6px 8px;
+        border-radius:6px;
+        font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
+        font-size:0.95rem
+    }
+    .note{
+        background:#fffbe6;
+        border-left:4px solid #f5c000;
+        padding:12px;
+        border-radius:6px
+    }
+    .danger{
+        background:#fff0f0;
+        border-left:4px solid #e14b4b;
+        padding:12px;
+        border-radius:6px
+    }
+    a.button{
+        display:inline-block;
+        padding:8px 12px;
+        border-radius:8px;
+        background:#0b74de;
+        color:#fff;
+        text-decoration:none
+    }
+    footer{
+        margin-top:28px;
+        color:#666;
+        font-size:0.92rem
+    }

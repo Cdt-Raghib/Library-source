@@ -52,7 +52,8 @@ class DepositSingle(MDScreen):
         return self.db.execute('UPDATE books SET comments=? WHERE book_no=?', (pc,book_no))
 
     def deposit(self, number, comments):
-        if self.db is None:
+        if self.db is None or self.issue is None:
+            NotificationBar().open_with_text(text="Record not found", error=True)
             return
         a = self.db.execute('UPDATE users SET token=token+1 WHERE cadet_no=?', (self.issue['cadet_no'],), on_error='<ec>: User token update failed')
         if isinstance(a, int):

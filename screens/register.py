@@ -1,4 +1,3 @@
-from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
 '''
@@ -17,6 +16,12 @@ class RegisterUser(MDScreen):
         pass
 
     def register_user(self):
+        try:
+            x = int(self.ids.batch_register.text)
+        except ValueError:
+            self.ids.batch_register.error = True
+            return
+        self.ids.batch_register.error = False
         info = {
             'name': self.ids.name_register.text,
             'cadet_no': self.ids.cadet_no_register.text,

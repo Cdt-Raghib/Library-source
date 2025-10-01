@@ -53,6 +53,8 @@ class BookDetailDialog(MDDialog):
 class BookCardView(MDCard):
     icon = StringProperty('book-open-page-variant')
     text = StringProperty('')
+    status = StringProperty()
+
 
 class BookList(MDScreen):
     keyword = 'book_no'
@@ -110,7 +112,7 @@ class BookList(MDScreen):
         
         for f in rows:
             print(f)
-            self.card_view = BookCardView(on_release=lambda y, x=f:self.show_details(book_dict=x))
+            self.card_view = BookCardView(on_release=lambda y, x=f:self.show_details(book_dict=x), status='Available' if f['stock']>0 else 'Unavailable')
         
             if f.get('icon', 'e') != 'e':
                 self.card_view.icon = f.get('icon')

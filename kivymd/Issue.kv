@@ -20,8 +20,8 @@
 <IssueBooks>:
     MDScrollView:
         do_scroll_x: False
-        size_hint: 1, 0.8
-        pos_hint: {'top':0.85}
+        size_hint: 1, 0.9
+        pos_hint: {'top':0.9}
         scroll_wheel_distance: '30dp'
         smooth_scroll_end: 10
         bar_width: '5dp'
@@ -51,8 +51,13 @@
                 id: book_no
                 on_text: root.search_book(self)
                 hint_text: 'Book No.'
+                required: True
                 MDTextFieldHintText:
                     text: 'Book No.'
+                
+                MDTextFieldHelperText:
+                    text: '*Required'
+                    mode: 'on_error'
 
             ITextField:
                 id: book_name
@@ -76,18 +81,23 @@
                 id: cadet_no
                 hint_text: 'Cadet No.'
                 on_text: root.search(cadet_no)
+                required: True
                 MDTextFieldHintText:
                     text: 'Cadet No.'
                 
+                MDTextFieldHelperText:
+                    text: '*Required'
+                    mode: 'on_error'
+                
             MDLabel:
                 text: root.issue_cadet_name
-                adaptive_height: True
-                padding: '15dp'
+                size_hint_y: None
+                height: self.texture_size[1] + dp(15)
             
             MDLabel:
                 text: root.issue_cadet_batch
-                adaptive_height: True
-                padding: '15dp'
+                size_hint_y: None
+                height: self.texture_size[1] + dp(15)
             
             MDButton:
                 style: 'tonal'

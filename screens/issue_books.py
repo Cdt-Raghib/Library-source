@@ -59,21 +59,37 @@ class IssueBooks(MDScreen):
             NotificationBar().open_with_text(text='Fill all required fields', error=True)
             return False
         
-        r = self.database.execute('SELECT cadet_no FROM users WHERE cadet_no=?;', (self.input_info['cadet_no'],), on_error='User not found. Register first.')
-        if r in (101, 102): #101, 102 are error codes
-            return False
+        r = self.database.fetchone('SELECT cadet_no FROM users WHERE cadet_no=?;', (self.input_info['cadet_no'],))
+        match r:
+            case int():
+                return False
+            case None:
+                NotificationBar().open_with_text(text='User not found', error=True)
+                return False
+            
         r2 = self.database.fetchone('SELECT stock FROM books WHERE book_no=?', (self.input_info['book_no'], ), on_error='<ec>:Failed to get stock.')
-        if r2['stock']<=0 or r2 in (101,102):
-            NotificationBar().open_with_text(text='Book is out of stock', error=True)
-            return False
+        match r2:
+            case None:
+                NotificationBar().open_with_text(text='Book not found', error=True)
+                return False
+            case dict():
+                if r2['stock']<=0:
+                    NotificationBar().open_with_text(text='Book is out of stock', error=True)
+                    return False
+            case int():
+                return False 
 
         r4 = self.database.fetchone('SELECT token FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],))
-        if r4 in (101, 102) or r4 is None:
-            return False
-        tokens = r4['token']
-        if tokens<=0:
-            NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
-            return False
+        match r4:
+            case int():
+                return False
+            case dict():
+                if r4['token']<=0:
+                    NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
+                    return False
+            case None:
+                return False
+            
         return True
     
     def issue_book(self):
@@ -119,7 +135,7 @@ class IssueBooks(MDScreen):
         self.ids.category.text = book['category']
 
     def search(self, cadet_no):
-        result = self.database.execute('SELECT cadet_name, batch FROM users WHERE cadet_no=?', (int(cadet_no.text),), show_error=False)
+        result = self.database.execute('SELECT cadet_name, batch FROM users WHERE cadet_no=?', (cadet_no.text,), show_error=False)
         if not isinstance(result, int):
             row = result.fetchone()
             if row:

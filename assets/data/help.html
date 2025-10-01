@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Library App — Release v1.0 beta — Troubleshoot</title>
+  <link href="help.css" type="text/css" rel="stylesheet"> 
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Library App <small style="font-weight:600;color:#666">(release v.1.0 beta)</small></h1>
+      <div class="meta">Troubleshooting guide &amp; recovery instructions</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Troubleshoot</h2>
+    <p>Below are the error codes you may encounter and their common causes and fixes.</p>
+
+    <h3>Error code <strong>101 — Integrity Error</strong></h3>
+    <p>This error may happen for the following cases:</p>
+    <ul>
+      <li>Trying to add a book or user that already exists.</li>
+      <li>Trying to issue a book with a book number or cadet number that has not been added.</li>
+      <li>Trying to deposit (return) a book that was never issued.</li>
+    </ul>
+
+    <h3>Error code <strong>102 — Operational Error</strong></h3>
+    <p>This error may happen for the following cases:</p>
+    <ul>
+      <li>Using double or single quotes (<code>"</code> or <code>'</code>) in names. Avoid them to prevent SQL issues.</li>
+      <li>Putting alphabetic characters or ordinal suffixes where integers are required. Example: use <code>43</code> instead of <code>43rd</code> for batch numbers.</li>
+      <li>In many cases this error arises from internal bugs; if you cannot resolve it, contact the developer.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Data loss — possible causes</h2>
+    <ul>
+      <li>Sudden shutdown of the PC (power loss, crash).</li>
+      <li>Switching Windows user accounts while the app was running.</li>
+    </ul>
+
+    <div class="note">
+      <strong>Tip:</strong> The app keeps backup copies — try restoring from the backups folder first (instructions below).
+    </div>
+  </section>
+
+  <section>
+    <h2>Solution — Restore from backup</h2>
+    <p>Follow these steps to restore the latest backup of the application's database:</p>
+    <ol>
+      <li>Open your <strong>User folder</strong> on the <code>C:\</code> drive. Example path: <code>C:\Users\&lt;YourUserName&gt;</code>.</li>
+      <li>Navigate to: <code>AppData\Local\Library\Backups\lib</code>. (Note: <code>AppData</code> is hidden by default — enable "Show hidden files" in File Explorer if needed.)</li>
+      <li>The backup files are timestamped. Choose the most recent file and rename it to <code>library.db</code>.</li>
+      <li>Copy (or cut) that <code>library.db</code> and replace the existing <code>library.db</code> file in the application's main <code>Library</code> folder.</li>
+    </ol>
+
+    <div class="danger">
+      <strong>Warning:</strong> Always keep a copy of the original files before replacing them. If unsure, copy the backup to a safe location first.
+    </div>
+  </section>
+
+  <section>
+    <h2>Further help &amp; updates</h2>
+    <p>Check for recent updates and the project repository on GitHub:</p>
+    <p><a class="button" href="https://github.com/Cdt-Raghib/Library-source" target="_blank" rel="noopener">View on GitHub</a></p>
+    <p>For further queries contact the developer by email:</p>
+    <p><a href="mailto:pyraghib@gmail.com">pyraghib@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <small>Generated Troubleshoot page — Library App v1.0 beta</small>
+  </footer>
+</body>
+</html>

@@ -72,7 +72,7 @@ class IssueBooks(MDScreen):
             case None:
                 NotificationBar().open_with_text(text='Book not found', error=True)
                 return False
-            case type(sqlite3.Row):
+            case sqlite3.Row():
                 if r2['stock']<=0:
                     NotificationBar().open_with_text(text='Book is out of stock', error=True)
                     return False
@@ -83,7 +83,7 @@ class IssueBooks(MDScreen):
         match r4:
             case int():
                 return False
-            case type(sqlite3.Row):
+            case sqlite3.Row():
                 if r4['token']<=0:
                     NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
                     return False

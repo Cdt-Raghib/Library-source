@@ -3,7 +3,7 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from utils.book import Books
 from utils.notificationbar import NotificationBar
-
+import sqlite3
 '''
 Feature to be added:
     add a seperator before cadet no.: Done
@@ -72,8 +72,8 @@ class IssueBooks(MDScreen):
             case None:
                 NotificationBar().open_with_text(text='Book not found', error=True)
                 return False
-            case dict():
-                if r2['stock']<=0:
+            case sqlite3.Row():
+                if int(r2['stock'])<=0:
                     NotificationBar().open_with_text(text='Book is out of stock', error=True)
                     return False
             case int():
@@ -83,8 +83,8 @@ class IssueBooks(MDScreen):
         match r4:
             case int():
                 return False
-            case dict():
-                if r4['token']<=0:
+            case sqlite3.Row():
+                if int(r4['token'])<=0:
                     NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
                     return False
             case None:

@@ -5,6 +5,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import StringProperty
 from utils.book import Books
 from kivymd.uix.dialog import MDDialog
+from kivy.clock import Clock
 """
     Add refresh: Done
 """
@@ -19,7 +20,6 @@ class BookDetailDialog(MDDialog):
     manager = None
 
     def load_text(self):
-        print('bdd: ', self.book_dict)
         state = 'available' if self.book_dict['stock']>0 else 'unavailable'
         color = 'dc143c' if state=='unavailable' else '20ff08'
         comments = ''#ff9900
@@ -31,18 +31,17 @@ class BookDetailDialog(MDDialog):
                 comments+=f'[color=ff9900]->{f['cadet_no']}[/color]\n\n'
 
         self.text = f"""
-        [b]About:[/b]\n
-        {self.book_dict['title']}\n
-        Book no. : {self.book_dict['book_no']}\n
-        Author   : {self.book_dict['author']}\n
-        Donted by: {self.book_dict['donated_by']}\n
-        Status   : [color={color}]{state}[/color]\n
-        Rating   : {rating}
-        \n
-        [b]Comments:[/b]\n
-        {comments}
+[b]About:[/b]\n
+{self.book_dict['title']}\n
+Book no. : {self.book_dict['book_no']}\n
+Author   : {self.book_dict['author']}\n
+Donted by: {self.book_dict['donated_by']}\n
+Status   : [color={color}]{state}[/color]\n
+Rating   : {rating}
+\n
+[b]Comments:[/b]\n
+{comments}
         """
-        print(self.text)
 
     def move_to_issue(self):
         self.dismiss()
@@ -61,7 +60,8 @@ class BookList(MDScreen):
     book_inst = []
     _database = None
     card_view = None
-
+    searching_clock = None
+    
     def app_request(self, **kwargs):
         self._database = kwargs.get('db1', None)
         self.running_app = kwargs.get('main')
@@ -69,10 +69,10 @@ class BookList(MDScreen):
             raise ValueError("Database not found. Please provide a valid database instance.")
 
         self.load_books()
-        self.init_book_cards()
+        Clock.schedule_once(self.init_book_cards)
     
     def refresh(self, **kwargs):
-        self.init_book_cards(search=False)
+        Clock.schedule_once(self.init_book_cards)
 
     def load_books(self):
         """
@@ -102,16 +102,14 @@ class BookList(MDScreen):
                                       md_bg_color='blue')
         self.options.open()
     
-    def init_book_cards(self, find='', search=False):
+    def init_book_cards(self, dt, find='', search=False):
         rows = self.books.search(self.keyword, find) if search \
         else self.books.get_all(show_error=False)
-        print(f'home: {rows}')
         # if len(self.ids.boxlayout.children)>1:
         #     self.ids.boxlayout.remove_widget(self.ids.boxlayout.children[0])
         self.book_layout.clear_widgets()
         
         for f in rows:
-            print(f)
             self.card_view = BookCardView(on_release=lambda y, x=f:self.show_details(book_dict=x), status='Available' if f['stock']>0 else 'Unavailable')
         
             if f.get('icon', 'e') != 'e':
@@ -134,9 +132,12 @@ class BookList(MDScreen):
         dial.open()
 
     def search(self, text):
+        if not self.searching_clock:
+            self.searching_clock.cancel()
+            
         if text.text=='':
-            self.init_book_cards()
+            self.searching_clock = Clock.schedule_once(self.init_book_cards)
             return
         
-        self.init_book_cards(search=True, find=text)
+        self.searching_clock = Clock.schedule_once(lambda dt, x=True, y=text:self.init_book_cards(search=x, find=y))
         

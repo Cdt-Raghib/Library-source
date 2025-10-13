@@ -7,6 +7,7 @@ from kivymd.uix.navigationdrawer import(
 )
 from kivy.lang import Builder
 from kivy.core.audio import SoundLoader
+import os
 
 from screens.login import LoginScreen
 from screens.add_books import AddBooks
@@ -27,6 +28,9 @@ librarydb = DatabaseManager('assets/databases/library.db')
 accountdb = DatabaseManager('assets/databases/accounts.db')
 librarydb.executescript('SQL/library.sql')
 accountdb.executescript('SQL/accounts.sql')
+backupdir = os.environ['LOCALAPPDATA']+'/HouseLibrary/backup/'
+
+os.makedirs(f'{backupdir}', exist_ok=True)
 
 class MainApp(MDApp):
     app_screens1 = {
@@ -53,7 +57,9 @@ class MainApp(MDApp):
         self.theme_cls.accent_color = (0.86, 0.08, 0.24, 1)    # Crimson Red
         self.theme_cls.text_color = (0.2, 0.2, 0.2, 1) 
 
-        return Builder.load_file('kivymd/skeleton.kv')
+        #kv_path = os.path.join(base_dir, 'kivymd', 'skeleton.kv')
+        #print(f"Loading KV file from: {kv_path}")
+        return Builder.load_file('kivymd/skeleton.kv')#kv_path)
     
     def add_nav_item(self, screen_dict):
         for name, icon in screen_dict.items():
@@ -110,8 +116,8 @@ class MainApp(MDApp):
     def on_stop(self):
         librarydb.commit()
         accountdb.commit()
-        librarydb.backup('assets/data/backups/lib/')
-        accountdb.backup('assets/data/backups/acc/')
+        librarydb.backup(backupdir)
+        accountdb.backup(backupdir)
         librarydb.close()
         accountdb.close()
     

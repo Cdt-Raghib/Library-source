@@ -28,33 +28,49 @@ class Cipher:
         
         return decrypted
     
-class LoginScreen(MDScreen):
+class Login(MDScreen):
     login_message = StringProperty()
     login_error = BooleanProperty(False)
     accounts = []
     passwords = []
+    roles = []
     database = None
+    main = None
     
     def app_request(self, **kwargs):
-        self.database = kwargs.get('db2')
+        self.database = kwargs.get('databases').get('accounts.db')
+        self.main = kwargs.get('main')
     
     def refresh(self, **kwargs):
         pass
     
     def load_info(self):
-        rows = self.database.fetchall('SELECT username, password FROM accounts')
+        rows = self.database.fetchall('SELECT username, password, role FROM accounts')
         if isinstance(rows, int):
             return
         for row in rows:
             row = dict(row)
             self.accounts.append(row['username'])
-            self.passwords.append(row['password'])  
+            self.passwords.append(row['password'])
+            self.roles.append(row['role'])
+    
+    def move_next(self, inst):
+        fields = self.children[0].children[2:4]
+        print('login.py: ', fields)
+        if inst in fields:
+            idx = fields.index(inst)
+            if idx - 1 >= 0:
+                fields[idx - 1].focus = True
+            else:
+                self.login(self.ids.username, self.ids.password)
+                
 
     def login(self, username, password):
         self.load_info()
-        for f,k in zip(self.accounts,self.passwords):
+        for f,k,z in zip(self.accounts,self.passwords,self.roles):
             print(f,k)
             if username.text == Cipher().decode(f) and password.text == Cipher().decode(k):
+                self.main.current_account = z
                 self.manager.current = 'home'#'home'
                 self.manager.login_state = True
                 return 
@@ -63,9 +79,5 @@ class LoginScreen(MDScreen):
         self.login_message = "Error Username or Password"
 
 if __name__=='__main__':
-    print(Cipher().decode('ehqmr2veklmf'))
-    print(Cipher().encode('pyrlibrary@2224'))
-    print(Cipher().encode('coadmin.library'))
-    print(Cipher().encode('coadmin@library'))
-    print(Cipher().encode('asst.library'))
-    print(Cipher().encode('i am a volunteer'))
+    print(Cipher().encode('SBH'))
+    print(Cipher().encode('987654321'))

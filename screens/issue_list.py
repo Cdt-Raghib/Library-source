@@ -5,11 +5,13 @@ from kivymd.uix.dialog import MDDialog,\
 MDDialogHeadlineText, MDDialogSupportingText, MDDialogButtonContainer
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.list import MDListItem
-from kivy.properties import StringProperty, ListProperty
+from kivy.properties import StringProperty, ListProperty, NumericProperty
+from kivy.clock import Clock
 
 """
-Fix it
+    Make available to search by Cadet name and Book Title: Pending
 """
+
 Builder.load_file('kivymd/issue-list.kv')
 class MyList(MDListItem):
     book_name = StringProperty('')
@@ -28,7 +30,8 @@ class MyList(MDListItem):
                 Book name : {self.book_name}\n\
                 Book no.  : {self.book_no}\n\
                 Issued to : {self.cadet_name} ({self.cadet_no})\n\
-                Issue date: {self.issue_date}'
+                Issue date: {self.issue_date}',
+                halign = "left"
                 ),
             MDDialogButtonContainer(
                 MDButton(
@@ -42,8 +45,9 @@ class MyList(MDListItem):
 class IssueList(MDScreen):
     issue_database = None
     issue_data = ListProperty([])
-    searchby = StringProperty('cadet_no')
-    
+    searchby = StringProperty('title')
+    total = NumericProperty()
+
     def open_options(self, caller):
         self.items = [
         {
@@ -53,6 +57,10 @@ class IssueList(MDScreen):
         {
         'text':'Cadet no.',
         'on_release':lambda x='cadet_no', y='Cadet no.':self.search_by(x,y),
+        },
+        {
+        'text':'Title.',
+        'on_release':lambda x='title', y='Title':self.search_by(x,y),
         }
         ]
         self.options = MDDropdownMenu(items = self.items, caller=caller, position='bottom', theme_bg_color='Custom')
@@ -62,14 +70,16 @@ class IssueList(MDScreen):
         """
             Create a database object in main and pass it to here
         """
-        self.issue_database = kwargs.get('db1', None)
-        self.search(search=False)
-        print('Issue list', self.issue_data)
+        self.issue_database = kwargs.get('databases').get('library.db')
+        #self.search(search=False)
+        Clock.schedule_once(lambda x, y=False:self.search(search=y))
+        #self.search(search=False)
+        #print('Issue list', self.issue_data)
         if self.issue_database is None:
             raise ValueError("No database object provided to issue_list screen")
     
     def refresh(self, **kwargs):
-        self.search(search=False)
+        Clock.schedule_once(lambda x, y=False:self.search(search=y))
 
     def search(self, text='', search = True):
         if search:
@@ -77,18 +87,17 @@ class IssueList(MDScreen):
         else:
             fetched = self.issue_database.fetchall('SELECT * FROM transactions')
         
-        print(fetched)
         if isinstance(fetched, int):
             return
         self.issue_data.clear()
-            
-
+        self.total = len(fetched)
+        
         for row in fetched:
             row = dict(row)
-            print(row['cadet_no'], row['book_no'])
+            #print(row['cadet_no'], row['book_no'])
             cn = self.issue_database.fetchone('SELECT cadet_name FROM users WHERE cadet_no = ?', (row['cadet_no'],))
             bn = self.issue_database.fetchone('SELECT title FROM books WHERE book_no = ?', (row['book_no'],))
-            print('Issue-list: ',bn,cn)
+            #print('Issue-list: ',bn,cn)
         
             self.issue_data.append(
                 {
@@ -106,11 +115,3 @@ class IssueList(MDScreen):
         self.searchby = hint
         self.ids.search_plate.text = plate_text
         self.options.dismiss()
-
-
-# class TestApp(MDApp):
-#     def build(self):
-#         return 
-    
-# if __name__ == '__main__':
-#     TestApp().run()

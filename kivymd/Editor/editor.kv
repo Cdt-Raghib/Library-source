@@ -1,0 +1,50 @@
+<EditorField>
+	mode: 'filled'
+	on_text: root.update(self.text)
+	MDTextFieldHintText:
+		text: root.column
+
+<Editor>
+	MDBoxLayout:
+		orientation: 'vertical'
+	    spacing: '20dp'
+        padding: '15dp'
+        size_hint: 1, 0.9
+        pos_hint: {'top':0.9}
+        
+		MDLabel:
+            text: "Edit Info"
+            theme_font_style: 'Custom'
+            font_style: 'Display'
+            role: 'small'
+            halign: 'left'
+            size_hint: 1, None
+            height: dp(10)
+
+        MDDivider: 
+            theme_divider_color: 'Custom'
+            color: root.theme_cls.primaryColor
+
+	    MDRecycleView:
+		    id: rv_field
+		    viewclass: 'EditorField'    
+		    data: root.fields
+		    scroll_wheel_distance: '30dp'
+		    smooth_scroll_end: 10
+		    RecycleBoxLayout:
+		        orientation: 'vertical'
+		        spacing: '15dp'
+		        size_hint_y: None
+		        height: self.minimum_height
+		        default_size_hint: 1, None
+		        default_height: "60dp"
+
+	    MDButton:
+            pos_hint: {'center_x': 0.5}
+            on_press: root.save()
+            md_bg_color: root.theme_cls.primaryColor
+            MDButtonText:
+                text: 'Save'
+
+            MDButtonIcon:
+            	icon: 'content-save'

@@ -3,7 +3,8 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty
 from utils.book import Books
 from utils.notificationbar import NotificationBar
-
+import sqlite3
+from utils.historywriter import HistoryWriter
 '''
 Feature to be added:
     add a seperator before cadet no.: Done
@@ -19,9 +20,11 @@ class IssueBooks(MDScreen):
     issue_cadet_batch = StringProperty('')
     input_info = {}
     database = None
+    history = None
 
     def app_request(self, **kwargs):
-        self.database = kwargs.get('db1', None)
+        self.database = kwargs.get('databases').get('library.db')
+        self.history = HistoryWriter(kwargs.get('main'), database=kwargs.get('databases').get('history.db'), activity_type='ISSUE')
         self.books = Books(self.database)
         if self.database is None:
             raise ValueError('No database provided')
@@ -41,15 +44,15 @@ class IssueBooks(MDScreen):
     def fetch_info(self):
         for f in self.children[0].children[0].children:
             if f.__class__.__name__ == "ITextField":
-                if self.rectify(f.hint_text) in ('cadet_no', 'book_no'):
+                if self.rectify(f.hint_text) in ('cadet_no', 'book_no', 'title'):
                     self.input_info[self.rectify(f.hint_text)] = f.text
 
     def move_next(self, inst):
         fields = [f for f in self.children[0].children[0].children if f.__class__.__name__ == "ITextField"]
         if inst in fields:
             idx = fields.index(inst)
-            if idx + 1 < len(fields):
-                fields[idx + 1].focus = True
+            if idx - 1 >= 0:
+                fields[idx - 1].focus = True
     
     def check_validity(self):
         cadet_no = self.input_info.get('cadet_no')
@@ -72,8 +75,8 @@ class IssueBooks(MDScreen):
             case None:
                 NotificationBar().open_with_text(text='Book not found', error=True)
                 return False
-            case dict():
-                if r2['stock']<=0:
+            case sqlite3.Row():
+                if int(r2['stock'])<=0:
                     NotificationBar().open_with_text(text='Book is out of stock', error=True)
                     return False
             case int():
@@ -83,8 +86,8 @@ class IssueBooks(MDScreen):
         match r4:
             case int():
                 return False
-            case dict():
-                if r4['token']<=0:
+            case sqlite3.Row():
+                if int(r4['token'])<=0:
                     NotificationBar().open_with_text(text='Cannot take more than 2 books', error=True)
                     return False
             case None:
@@ -113,6 +116,8 @@ class IssueBooks(MDScreen):
         )
         if not (isinstance(result, int) or isinstance(cut_token, int)):
             NotificationBar().open_with_text(text='Issued successfully')
+            name = self.database.fetchone('SELECT cadet_name FROM users WHERE cadet_no=?', (self.input_info['cadet_no'],))
+            self.history.write(f'{name['cadet_name']}-{self.input_info['cadet_no']} issued {self.input_info['title']}')
             self.database.commit()
     
     def search_book(self, book_no):

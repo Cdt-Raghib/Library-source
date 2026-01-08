@@ -1,16 +1,19 @@
 from kivy.lang import Builder
 from kivymd.uix.screen import MDScreen
+from utils.notificationbar import NotificationBar
+from utils.historywriter import HistoryWriter
 '''
 Features to be added:
     on enter move to next filed
 '''
 Builder.load_file('kivymd/register.kv')
 
-class RegisterUser(MDScreen):
+class Register(MDScreen):
     database = None
 
     def app_request(self, **kwargs):
-        self.database = kwargs.get('db1')
+        self.database = kwargs.get('databases').get('library.db')
+        self.history = HistoryWriter(master=kwargs.get('main'), activity_type='REGISTER', database=kwargs.get('databases').get('history.db'))
     
     def refresh(self, **kwargs):
         pass
@@ -32,3 +35,6 @@ class RegisterUser(MDScreen):
         if isinstance(result, int):
             return
         self.database.commit()
+        NotificationBar().open_with_text(text="Registered successfully")
+        self.history.write(f'{info['name']} joined. uid: {info["cadet_no"]}, batch: {info["batch"]}')
+

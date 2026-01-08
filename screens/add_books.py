@@ -2,6 +2,8 @@ from kivymd.uix.screen import MDScreen
 from kivy.lang import Builder
 from utils.book import Books
 from utils.notificationbar import NotificationBar
+from utils.historywriter import HistoryWriter
+
 '''
 Feature to be added:
     multiple books add
@@ -12,16 +14,20 @@ class AddBooks(MDScreen):
     books = None
     input_info = {}
 
+    def refresh(self, **kwargs):
+        pass
+    
     def app_request(self, **kwargs):
-        self.database = kwargs.get('db1')
+        self.database = kwargs.get('databases').get('library.db')
+        self.history = HistoryWriter(master=kwargs.get('main'), database=kwargs.get('databases').get('history.db'), activity_type='ADD BOOK')
         self.books = Books(self.database)
 
     def move_next(self, inst):
         fields = [f for f in self.children[0].children[0].children if f.__class__.__name__ == "ATextField"]
         if inst in fields:
             idx = fields.index(inst)
-            if idx + 1 < len(fields):
-                fields[idx + 1].focus = True
+            if idx - 1 >= 0:
+                fields[idx - 1].focus = True
     
     def add_book(self):
         if not self.fetch_info():
@@ -29,6 +35,7 @@ class AddBooks(MDScreen):
         r = self.books.add(self.input_info)
         if not isinstance(r, int):
             NotificationBar().open_with_text(text='Book added successfully.')
+            self.history.write(f'{self.input_info['title']} was added to book list.')
 
     def rectify(self, key):
         key = key.lower()

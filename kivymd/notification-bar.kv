@@ -2,9 +2,11 @@
     size_hint_x: 0.5
     pos_hint: {"center_x": 0.5}
     size_hint_y: None
-    on_open: root.play_sound()
+    #on_open: root.play_sound()
     y: dp(48)
 
+    MDSnackbarText:
+        text: root.headline
     MDSnackbarSupportingText:
         text: root.text
         theme_text_color: 'Custom'

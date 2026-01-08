@@ -1,0 +1,14 @@
+[
+    ["Home", "home", "home"],
+    ["Issue Books", "book-arrow-up-outline", "issue_books"],
+    ["Deposit Books", "book-arrow-down-outline", "deposit"],
+    ["Add Books", "book-plus-outline", "add_books"],
+    ["Issue List", "clipboard-list", "issue_list"],
+    ["","",""],
+    ["Users", "account", "users"],
+    ["Register User", "account-plus-outline", "register"],
+    ["History", "history", "history"],
+    ["","",""],
+    ["SQL Console", "console", "sql_console"],
+    ["Settings", "cog", "settings"]
+]

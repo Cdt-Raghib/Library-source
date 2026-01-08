@@ -1,3 +1,5 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
 <MDIconLabel1@MDBoxLayout>
     MDRelativeLayout:
         size_hint: 0.4,1
@@ -45,7 +47,7 @@
         
             MDDivider: #Fix this divider color
                 theme_divider_color: 'Custom'
-                color: self.theme_cls.primaryColor
+                color: root.theme_cls.primaryColor
 
             ITextField:
                 id: book_no
@@ -90,18 +92,18 @@
                     mode: 'on_error'
                 
             MDLabel:
-                text: root.issue_cadet_name
+                text: root.issue_cadet_name+'\n'+root.issue_cadet_batch
                 size_hint_y: None
                 height: self.texture_size[1] + dp(15)
+                canvas.before:
+                    Color:
+                        rgba: get_color_from_hex('#e54fff')
             
-            MDLabel:
-                text: root.issue_cadet_batch
-                size_hint_y: None
-                height: self.texture_size[1] + dp(15)
             
             MDButton:
                 pos_hint: {'center_x': 0.5}
                 on_press: root.issue_book()
+                md_bg_color: root.theme_cls.primaryColor
                 MDButtonText:
                     text: 'Issue'
             

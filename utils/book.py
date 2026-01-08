@@ -30,6 +30,8 @@ class Books:
         """
         if text is None:
             return ''
+        if not isinstance(text, str):
+            return text
         
         if '[end_comment]' in text:
             d = []
@@ -37,8 +39,8 @@ class Books:
             for f in comments:
                 if f=='':
                     continue
-                print(f)
-                print(f.split('>'))
+                # print(f)
+                # print(f.split('>'))
                 cn = f.split('>')[0].removeprefix('<')
                 d.append({'cadet_no':cn, 'comment':f.split('>')[1]})
             return d

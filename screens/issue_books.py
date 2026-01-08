@@ -5,6 +5,7 @@ from utils.book import Books
 from utils.notificationbar import NotificationBar
 import sqlite3
 from utils.historywriter import HistoryWriter
+
 '''
 Feature to be added:
     add a seperator before cadet no.: Done
@@ -134,7 +135,6 @@ class IssueBooks(MDScreen):
         if len(book) == 0:
             return
         
-        #May create an issue
         self.ids.book_name.text= book['title']
         self.ids.author.text = book['author']
         self.ids.category.text = book['category']

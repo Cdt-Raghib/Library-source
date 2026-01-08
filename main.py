@@ -8,7 +8,6 @@ from kivymd.uix.navigationdrawer import(
 from kivymd.uix.dialog import MDDialog, MDDialogHeadlineText, MDDialogSupportingText
 from kivy.lang import Builder
 from kivy.core.audio import SoundLoader
-from kivy.clock import Clock
 import os
 
 from utils.databasemanager import DatabaseMaster
@@ -35,6 +34,7 @@ with open('config', 'r') as file:
     dev_check = file.read()
 DEV_MODE = dev_check=='d8102224'
 UNDER_DEV = ['Settings', 'SQL Console']
+
 os.makedirs(f'{backupdir}', exist_ok=True)
 
 class MainApp(MDApp):
@@ -152,3 +152,4 @@ class MainApp(MDApp):
 
 if __name__ == '__main__':
     MainApp().run()
+

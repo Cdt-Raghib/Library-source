@@ -12,6 +12,7 @@ from kivymd.uix.fitimage import FitImage
 from kivymd.uix.divider import MDDivider
 
 from utils.notificationbar import NotificationBar
+
 """
     Add refresh: Done
     ***Take all book cards into a RecycleLayout: Done
@@ -62,6 +63,7 @@ Category: {self.book_dict['category']}
         self.ids.info_box.add_widget(MDDivider(theme_divider_color='Custom', color=self.theme_cls.primaryColor))
         self.ids.info_box.add_widget(MDLabel(text=about, markup=True, adaptive_height=True))
 
+
     def move_to_issue(self):
         self.dismiss()
         self.manager.root.ids.screen_manager.current = 'issue_books'
@@ -96,7 +98,7 @@ class Home(MDScreen):
             raise ValueError("Database not found. Please provide a valid database instance.")
 
         self.load_books()
-        self.init_book_cards()
+        Clock.schedule_once(self.init_book_cards)
     
     def refresh(self, **kwargs):
         self.init_book_cards()
@@ -152,6 +154,7 @@ class Home(MDScreen):
         self.excess = 'Loading widgets...'
         self.mount_wids(rows)
 
+
     def search_by(self, keyword, item_text):
         # v.1.1
         self.keyword = keyword
@@ -174,4 +177,3 @@ class Home(MDScreen):
         
         #self.searching_clock = Clock.schedule_once(lambda dt, x=True, y=text:self.init_book_cards(search=x, find=y))
         self.init_book_cards(search=True, find=text)
-        

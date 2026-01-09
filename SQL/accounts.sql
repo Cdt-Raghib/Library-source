@@ -8,4 +8,4 @@ CREATE TABLE if NOT EXISTS accounts (
 INSERT or IGNORE INTO accounts (username, password, role) VALUES
 ('ehqmr2veklmf', 't}vpmfvev}D6668', 'admin'),
 ('gsehqmr2pmfvev}', 'gsehqmrDpmfvev}', 'coadmin'),
-('ewwx2pmfvev}', 'm$eq$e$zspyrxiiv', 'assistant');
+('WFL', '=<;:98765', 'assistant');

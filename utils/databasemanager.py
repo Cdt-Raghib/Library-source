@@ -36,6 +36,8 @@ class DatabaseManager:
         cursor = self.conn.cursor()
         try:
             cursor.execute(query, params)
+            if query.strip().lower().startswith(("insert", "update", "delete", "create", "drop")):
+                self.conn.commit()
         
         except sqlite3.IntegrityError as e:
             if show_error:
@@ -89,6 +91,66 @@ class DatabaseManager:
     def close(self):
         self.conn.close()
     
+    def dbname(self):
+        s = ''
+        l = len(self.db_path)
+        for f in reversed(self.db_path):
+            if f == '/':
+                break
+            s+=f
+        r = ''
+        for f in reversed(s):
+            r+=f
+        print(f'db name: {r}')
+        return r
+    
     def backup(self, backup_folder):
-        backup_file = backup_folder+f'{self.db_path}_backup_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.db'
+        backup_file = backup_folder+f'{self.dbname()}_backup_{datetime.datetime.now().strftime("%Y%m%d_%H%M%S")}.db'
         shutil.copy(self.db_path, backup_file)
+
+class DatabaseMaster:
+    """
+    Manages the database manager
+    """
+    managers = {}
+
+    def dbname(self, db_path):
+        s = ''
+        l = len(db_path)
+        for f in reversed(db_path):
+            if f == '/':
+                break
+            s+=f
+        r = ''
+        for f in reversed(s):
+            r+=f
+        print(f'db name: {r}')
+        return r
+    
+    def __init__(self, db_names:dict):
+        for name, script in db_names.items():
+            print(name, script)
+            self.managers[self.dbname(name)]=DatabaseManager(name)
+            if script!=0 or script!='':
+                self.managers[self.dbname(name)].executescript(script)
+    
+    def get(self, name):
+        return self.managers[name]
+
+    def add(self, **kwargs):
+        self.manager.append(kwargs)
+    
+    def backup_all(self, backup_folder):
+        for k,v in self.managers.items():
+            v.backup(backup_folder)
+        
+    def close_all(self):
+        for k,v in self.managers.items():
+            v.close()
+    
+    def commit_all(self):
+        for k,v in self.managers.items():
+            v.commit()
+    
+            
+        

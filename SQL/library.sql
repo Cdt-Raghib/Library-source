@@ -3,8 +3,8 @@ CREATE TABLE if NOT EXISTS users (
     cadet_name TEXT NOT NULL,
     batch INTEGER NOT NULL,
     token INTEGER DEFAULT 2,
-    role TEXT DEFAULT 'member',
-    joined TEXT DEFAULT (DATE('now'))
+    role TEXT DEFAULT 'Member',
+    joined TEXT DEFAULT (DATE('now')) 
 )STRICT;
 
 CREATE TABLE if NOT EXISTS books (
@@ -19,9 +19,10 @@ CREATE TABLE if NOT EXISTS books (
     comments TEXT,
     FOREIGN KEY (donated_by) REFERENCES users(cadet_no)
 );
---create book name also if necessary
+--create book name also if necessary:done
 CREATE TABLE if NOT EXISTS transactions (
     transaction_id INTEGER PRIMARY KEY,
+    title TEXT REFERENCES books(title),
     cadet_no INTEGER,
     book_no INTEGER,
     issue_date DATE DEFAULT (DATE('now')),

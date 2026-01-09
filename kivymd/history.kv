@@ -1,0 +1,88 @@
+<HistoryList>:
+    MDListItemLeadingIcon:
+        icon: root.icon
+        theme_icon_color: 'Custom'
+        icon_color: root.icon_color
+
+    MDListItemSupportingText:
+        text: root.activity
+    MDListItemTertiaryText:
+        text: root.date 
+
+<History>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: '15dp'
+        spacing: '10dp'
+        MDBoxLayout:
+            size_hint: 1, 0.15
+            spacing: '15dp'
+
+            MDTextField:
+                id: utext
+                size_hint_x: 1
+                adaptive_width: True
+                on_text: root.search(utext.text)
+
+                MDTextFieldHintText:
+                    text: 'Search'
+                MDTextFieldLeadingIcon:
+                    icon: 'magnify'
+            
+        
+        MDScreen:
+            md_bg_color: self.theme_cls.backgroundColor
+            height: '80dp'
+            size_hint: 1, None
+            MDLabel:
+                text: 'Filter: '
+                adaptive_size: True
+                pos_hint: {'center_x':0.1, 'top':0.6}
+
+            MDButton:
+                adaptive_width: True
+                on_release: root.open_options(self)
+                pos_hint: {'center_x':0.25, 'top':0.7}
+                radius: [0,0,0,0]
+                theme_bg_color: 'Custom'
+                md_bg_color: 1, 132/255., 9/255.
+
+                MDButtonText:
+                    id: filter_plate
+                    text: 'All'
+                    theme_text_color: 'Custom'
+                    text_color: 'black'
+                
+                MDButtonIcon:
+                    icon: 'arrow-bottom-left-bold-outline'
+
+            MDButton:
+                adaptive_width: True
+                on_release: root.delete_all()
+                pos_hint: {'center_x':0.9, 'top':0.7}
+                radius: [0,0,0,0]
+                theme_bg_color: 'Custom'
+                md_bg_color: 1, 132/255., 9/255.
+
+                MDButtonText:
+                    text: 'Delete All'
+                    theme_text_color: 'Custom'
+                    text_color: 'black'
+                
+                MDButtonIcon:
+                    icon: 'trash-can-outline'
+
+        RecycleView:
+            id: rv
+            viewclass: 'HistoryList'
+            data: root.user_data
+            scroll_wheel_distance: '30dp'
+            smooth_scroll_end: 10
+
+            RecycleBoxLayout:
+                padding: ['0dp', '10dp']
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                default_size_hint: 1, None
+                default_height: "60dp"   

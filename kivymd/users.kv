@@ -1,17 +1,27 @@
 #:import get_color_from_hex kivy.utils.get_color_from_hex
-<MyList>
-    id: my_list
+<UserList>
+    id: user_list
     on_press: root.show_details()
+    theme_bg_color: 'Custom'
+    #md_bg_color: root.convert_rgba(root.color, alpha=0.5)
+    
+    MDListItemLeadingAvatar:
+        source: root.icon
     MDListItemHeadlineText:
-        text: root.book_name
+        text: root.name
     MDListItemSupportingText:
-        text: root.cadet_name
+        text: root.cadet_no
     
     MDListItemTertiaryText:
-        text: root.issue_date
+        text: f'{root.batch} batch'
     
+    MDListItemTrailingSupportingText:
+        text: root.role
+        theme_text_color: 'Custom'
+        color: root.convert_rgba(root.color)
 
-<IssueList>:
+
+<Users>:
     MDBoxLayout:
         orientation: 'vertical'
         padding: '15dp'
@@ -21,10 +31,10 @@
             spacing: '15dp'
 
             MDTextField:
-                id: itext
+                id: utext
                 size_hint_x: 0.8
                 adaptive_width: True
-                on_text: root.search(itext.text)
+                on_text: root.search(utext.text)
 
                 MDTextFieldHintText:
                     text: 'Search'
@@ -38,7 +48,7 @@
                 
                 MDButtonText:
                     id: search_plate
-                    text: 'Title'
+                    text: 'Cadet name'
                 
                 MDButtonIcon:
                     icon: 'arrow-bottom-left-bold-outline'
@@ -58,14 +68,15 @@
 
         RecycleView:
             id: rv
-            viewclass: 'MyList'    
-            data: root.issue_data
+            viewclass: 'UserList'
+            data: root.user_data
             scroll_wheel_distance: '30dp'
             smooth_scroll_end: 10
+
             RecycleBoxLayout:
+                padding: ['0dp', '10dp']
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
                 default_size_hint: 1, None
                 default_height: "80dp"
-        

@@ -1,12 +1,14 @@
 <BookDetailDialog>
+    background: ''
+    md_bg_color: 0.1,0.1,0.1,0.75
     MDDialogHeadlineText:
-        text: 'Details'
-    MDDivider:
+        text: root.book_dict['title']
+        halign: 'left'
+        valign:'bottom'
 
     MDDialogContentContainer:
         size_hint_y: None
-        height: "250dp"
-        size_hint_x: 1
+        height: '250dp'
         MDScrollView:
             do_scroll_x: False
             scroll_wheel_distance: '30dp'
@@ -14,25 +16,39 @@
             bar_width: '3dp'
             bar_inactive_color: 0, 0, 0, 1
 
-            MDLabel:
-                text: root.text
-                markup: True
+            MDBoxLayout:
+                id: info_box
+                orientation: 'vertical'
+                height: self.minimum_height
                 size_hint_y: None
-                height: self.texture_size[1]
-                padding: '10dp', '10dp'
-                text_size: self.width, None
-    
+                #spacing: '10dp'
+
+
     MDDialogButtonContainer:
+        size_hint_x: None
+        width: '500dp'
+        spacing: '15dp'
+        Widget:
+            size_hint_x: 0.8
+
         MDButton:
             adaptive_size: True
-            pos_hint: {'center_x': 0.8}
+            on_release: root.move_to_edit()
+            MDButtonText:
+                text: 'Edit'
+
+            MDButtonIcon:
+                icon: 'database-edit'
+        
+        MDButton:
+            adaptive_size: True
             on_release: root.move_to_issue()
             MDButtonText:
                 text: 'Issue'
         
         MDButton:
             adaptive_size: True
-            pos_hint: {'center_x': 0.95}
+            style: 'text'
             on_release: root.dismiss()
             MDButtonText:
                 text: 'Close'

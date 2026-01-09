@@ -1,4 +1,4 @@
-<LoginScreen>:
+<Login>:
     md_bg_color: self.theme_cls.backgroundColor
    
     MDBoxLayout:
@@ -24,6 +24,7 @@
         
         MDTextField:
             id: username
+			on_text_validate: root.move_next(self)
             MDTextFieldHintText:
                 text: 'Username'
             
@@ -33,7 +34,7 @@
         MDTextField:
             id: password
             password: True
-
+			on_text_validate: root.move_next(self)
             MDTextFieldHintText:
                 text: 'Password'
             MDTextFieldLeadingIcon:
